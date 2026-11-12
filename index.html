@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>СРГ или СПА: что выгоднее</title>
+<meta name="description" content="Интерактивная шпаргалка для баера: как считать СРГ (CRG) и СПА (CPA), где проходит граница и что выбрать в вашей ситуации.">
+<meta name="theme-color" content="#0d0f13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#e8eaf0" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b63f0'/%3E%3Cpath d='M14 46L28 30l8 8 14-18' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#e8eaf0; --surface:#ffffff; --surface2:#f0f2f7; --surface3:#e2e6ee;
+  --text:#13151a; --muted:#646a7a; --grid:rgba(19,21,26,.09);
+  --crg:#2b63f0; --crg-soft:rgba(43,99,240,.12);
+  --cpa:#e8780a; --cpa-ink:#b45300; --cpa-soft:rgba(232,120,10,.14);
+  --good:#0f8f52; --bad:#d23a3a; --tie:#9aa1b2;
+  --seg-active:#ffffff;
+  --shadow:0 1px 2px rgba(18,24,40,.05), 0 12px 32px rgba(18,24,40,.09);
+  --shadow-sm:0 1px 3px rgba(18,24,40,.18);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0d0f13; --surface:#171a21; --surface2:#21252f; --surface3:#2c3140;
+    --text:#eef0f5; --muted:#8c93a4; --grid:rgba(238,240,245,.09);
+    --crg:#6b94ff; --crg-soft:rgba(107,148,255,.16);
+    --cpa:#ffa340; --cpa-ink:#ffa340; --cpa-soft:rgba(255,163,64,.16);
+    --good:#3ecf8e; --bad:#ff6b6b; --tie:#5d6579;
+    --seg-active:#3a4156;
+    --shadow:0 12px 32px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 4px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:max(20px,env(safe-area-inset-top)) 16px max(40px,env(safe-area-inset-bottom));
+}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{letter-spacing:-.02em;line-height:1.15}
+.hero{padding:20px 4px 8px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--crg);letter-spacing:.02em;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(30px,7vw,44px);font-weight:750;margin-bottom:12px}
+.lead{font-size:17px;color:var(--muted);max-width:60ch}
+.card{background:var(--surface);border-radius:24px;padding:20px;box-shadow:var(--shadow)}
+.card>h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.sub{color:var(--muted);font-size:15px;margin-bottom:16px}
+.crg-c{color:var(--crg)} .cpa-c{color:var(--cpa-ink)}
+b{font-weight:650}
+
+/* схемы */
+.two{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.two{grid-template-columns:1fr 1fr}}
+.scheme{background:var(--surface2);border-radius:18px;padding:16px}
+.scheme h3{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.dot.crg{background:var(--crg)} .dot.cpa{background:var(--cpa)} .dot.tie{background:var(--tie)}
+.scheme p{font-size:15px;color:var(--muted)}
+.formula{margin-top:12px;background:var(--surface);border-radius:12px;padding:10px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.chatnote{margin-top:12px;font-size:14px;color:var(--muted);background:var(--surface2);border-radius:14px;padding:12px 14px}
+
+/* контролы */
+.controls{display:grid;gap:14px 24px;grid-template-columns:1fr}
+@media(min-width:640px){.controls{grid-template-columns:1fr 1fr}}
+.field .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.field label{font-size:15px;font-weight:600}
+.field small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+.num{display:flex;align-items:center;gap:4px;background:var(--surface2);border-radius:12px;padding:0 10px;height:38px;min-width:96px}
+.num input{width:72px;background:transparent;color:var(--text);font:inherit;font-weight:650;text-align:right;border:0;outline:0;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
+.num input::-webkit-outer-spin-button,.num input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.num span{color:var(--muted);font-weight:600}
+.num:focus-within{box-shadow:0 0 0 2px var(--crg)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;touch-action:pan-y;--pct:50%;--fill:var(--crg);cursor:pointer}
+input[type=range]:focus{outline:none}
+input[type=range]:focus-visible{outline:2px solid var(--crg);outline-offset:2px;border-radius:8px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--fill) var(--pct),var(--surface3) var(--pct))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--surface3)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--fill)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm)}
+.f-cpa{--fill:var(--cpa)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 4px}
+.chip{font:inherit;font-size:14px;font-weight:600;color:var(--text);background:var(--surface2);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;transition:background .15s,transform .15s}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--text);color:var(--surface)}
+.chip:focus-visible,.seg button:focus-visible,.opt:focus-visible{outline:2px solid var(--crg);outline-offset:2px}
+
+.seg{display:inline-flex;background:var(--surface2);border-radius:12px;padding:3px;gap:2px;max-width:100%}
+.seg button{font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:transparent;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;transition:background .15s,color .15s}
+.seg button.on{background:var(--seg-active);color:var(--text);box-shadow:var(--shadow-sm)}
+.modehint{font-size:13px;color:var(--muted);margin-top:8px}
+details.more{margin-top:14px}
+details.more summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:" ▾"}
+details.more[open] summary::after{content:" ▴"}
+details.more .field{margin-top:12px;max-width:340px}
+
+/* результаты */
+.results{display:grid;gap:12px;grid-template-columns:1fr;margin-top:18px}
+@media(min-width:520px){.results{grid-template-columns:1fr 1fr}}
+.res{border-radius:18px;padding:16px;background:var(--surface2)}
+.res .tag{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.res .big{font-size:clamp(28px,7vw,36px);font-weight:750;letter-spacing:-.03em;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.res .how{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.res .profit{font-size:14px;margin-top:6px;font-weight:600;font-variant-numeric:tabular-nums}
+.res.win.crg{background:var(--crg-soft)} .res.win.cpa{background:var(--cpa-soft)}
+.verdict{margin-top:12px;border-radius:18px;padding:16px;background:var(--surface2)}
+.verdict.crg{background:var(--crg-soft)} .verdict.cpa{background:var(--cpa-soft)}
+.verdict h3{font-size:20px;font-weight:750;margin-bottom:4px}
+.verdict.crg h3{color:var(--crg)} .verdict.cpa h3{color:var(--cpa-ink)}
+.verdict p{font-size:15px;color:var(--muted)}
+.be{margin-top:10px;font-size:14px}
+.be b{color:var(--text)}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:20px 0 6px}
+.legend span{display:flex;align-items:center;gap:6px}
+.chart{width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:ew-resize}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:inherit;fill:var(--muted);font-size:11.5px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* вероятности */
+.stackbar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--surface2);margin:4px 0 12px}
+.stackbar i{display:block;height:100%;transition:width .3s ease}
+.probs{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:520px){.probs{grid-template-columns:repeat(3,1fr)}}
+.prob{background:var(--surface2);border-radius:14px;padding:12px 14px}
+.prob .v{font-size:24px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.prob .l{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.stat{background:var(--surface2);border-radius:14px;padding:12px 14px}
+.stat .l{font-size:13px;color:var(--muted)}
+.stat .v{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .v small{font-size:13px;font-weight:500;color:var(--muted)}
+.insight{margin-top:12px;font-size:15px;background:var(--surface2);border-radius:14px;padding:12px 14px}
+.tip{min-height:42px;margin-top:8px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tip b{color:var(--text)}
+
+/* викторина */
+.q{margin-top:16px}
+.q h3{font-size:15px;font-weight:650;margin-bottom:8px}
+.opts{display:grid;gap:6px;grid-template-columns:1fr}
+@media(min-width:640px){.opts{grid-template-columns:repeat(3,1fr)}}
+.opt{font:inherit;font-size:14px;font-weight:600;text-align:left;color:var(--text);background:var(--surface2);border:0;border-radius:14px;padding:12px 14px;cursor:pointer;transition:background .15s,transform .15s}
+.opt:active{transform:scale(.98)}
+.opt.on{background:var(--text);color:var(--surface)}
+.answer{margin-top:18px;border-radius:18px;padding:18px;background:var(--surface2)}
+.answer.crg{background:var(--crg-soft)} .answer.cpa{background:var(--cpa-soft)}
+.answer h3{font-size:24px;font-weight:750;margin-bottom:8px}
+.answer.crg h3{color:var(--crg)} .answer.cpa h3{color:var(--cpa-ink)}
+.answer ul{margin-left:18px;color:var(--muted);font-size:15px;display:grid;gap:4px}
+.answer li::marker{color:var(--muted)}
+
+/* чеклист */
+.check{display:grid;gap:8px;list-style:none}
+.check li{display:flex;gap:12px;align-items:flex-start;background:var(--surface2);border-radius:14px;padding:12px 14px;font-size:15px}
+.check .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--surface);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.check small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.rules{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.rules{grid-template-columns:1fr 1fr}}
+.rule{background:var(--surface2);border-radius:18px;padding:16px}
+.rule h3{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rule ul{margin-left:18px;font-size:15px;color:var(--muted);display:grid;gap:5px}
+footer{color:var(--muted);font-size:13px;padding:8px 8px 0;text-align:center}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Шпаргалка для баера</p>
+  <h1>СРГ или СПА: что выгоднее</h1>
+  <p class="lead">СПА платят за каждый депозит. СРГ гарантирует минимальную конверсию, и ты получаешь деньги, даже если лиды не дошли до депозита. Двигай ползунки: увидишь, где проходит граница и когда какая схема сильнее.</p>
+</header>
+
+<section class="card" id="how">
+  <h2>Две схемы за минуту</h2>
+  <p class="sub">Один и тот же оффер, разный способ получить деньги.</p>
+  <div class="two">
+    <div class="scheme">
+      <h3><span class="dot cpa"></span>СПА <span style="font-weight:500;color:var(--muted)">(CPA)</span></h3>
+      <p>Рекл платит ставку за каждый FTD, то есть за первый депозит. Конверсия выше, чем ждал, и ты зарабатываешь больше. Ниже, и меньше. Нет депозитов, нет денег.</p>
+      <div class="formula">доход = лиды × конверсия × ставка</div>
+    </div>
+    <div class="scheme">
+      <h3><span class="dot crg"></span>СРГ <span style="font-weight:500;color:var(--muted)">(CRG)</span></h3>
+      <p>Рекл гарантирует конверсию, например 10%. Реально вышло 3%, а платят как за 10%. Взамен «сверху» ты ничего не получаешь: потолок тот же, что и гарант.</p>
+      <div class="formula">доход = лиды × гарант % × ставка</div>
+    </div>
+  </div>
+  <p class="chatnote">Пример из переписки: <b>СРГ 1500+10</b> значит ставка 1500 $ и гарант 10%. Гарант на каждый лид это 1500 × 0,1 = <b>150 $</b>. На 50 лидов получается <b>7 500 $</b> при любой конверсии.</p>
+</section>
+
+<section class="card" id="calc">
+  <h2>Посчитай свой случай</h2>
+  <p class="sub">Подставь условия оффера и реальную конверсию связки.</p>
+
+  <div class="controls">
+    <div class="field">
+      <div class="row"><label for="in-rate">Ставка за FTD</label><div class="num"><input id="in-rate" type="number" inputmode="decimal" min="1"><span>$</span></div></div>
+      <input id="rg-rate" type="range" class="f-cpa" aria-label="Ставка за FTD">
+    </div>
+    <div class="field">
+      <div class="row"><label for="in-g">Гарант СРГ</label><div class="num"><input id="in-g" type="number" inputmode="decimal" min="0"><span>%</span></div></div>
+      <input id="rg-g" type="range" aria-label="Гарант СРГ">
+    </div>
+    <div class="field">
+      <div class="row"><label for="in-n">Сколько лидов</label><div class="num"><input id="in-n" type="number" inputmode="numeric" min="1"><span>шт</span></div></div>
+      <input id="rg-n" type="range" aria-label="Количество лидов">
+    </div>
+    <div class="field">
+      <div class="row"><label for="in-p">Реальная конверсия<small>лид → депозит</small></label><div class="num"><input id="in-p" type="number" inputmode="decimal" min="0"><span>%</span></div></div>
+      <input id="rg-p" type="range" aria-label="Реальная конверсия">
+    </div>
+  </div>
+
+  <div class="chips" role="group" aria-label="Быстрые примеры" style="margin-top:12px">
+    <button class="chip" data-p="3">3% — слабая связка</button>
+    <button class="chip" data-p="10">10% — ровно гарант</button>
+    <button class="chip" data-p="13">13% — сильная связка</button>
+  </div>
+
+  <div style="margin-top:14px">
+    <div class="seg" role="group" aria-label="Как устроен СРГ">
+      <button data-mode="fix" class="on">СРГ фикс</button>
+      <button data-mode="floor">СРГ с полом</button>
+    </div>
+    <p class="modehint" id="modehint"></p>
+  </div>
+
+  <details class="more">
+    <summary>Учесть расход на трафик</summary>
+    <div class="field">
+      <div class="row"><label for="in-spend">Расход на один лид</label><div class="num"><input id="in-spend" type="number" inputmode="decimal" min="0"><span>$</span></div></div>
+    </div>
+  </details>
+
+  <div class="results">
+    <div class="res" id="res-cpa">
+      <div class="tag"><span class="dot cpa"></span>СПА</div>
+      <div class="big" id="cpa-inc"></div>
+      <div class="how" id="cpa-how"></div>
+      <div class="profit" id="cpa-profit"></div>
+    </div>
+    <div class="res" id="res-crg">
+      <div class="tag"><span class="dot crg"></span>СРГ</div>
+      <div class="big" id="crg-inc"></div>
+      <div class="how" id="crg-how"></div>
+      <div class="profit" id="crg-profit"></div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict" aria-live="polite">
+    <h3 id="v-title"></h3>
+    <p id="v-text"></p>
+    <p class="be" id="be"></p>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot cpa"></i>Доход на СПА</span>
+    <span><i class="dot crg"></i>Доход на СРГ</span>
+  </div>
+  <div class="chart" id="chart1"></div>
+  <p class="hint">По горизонтали конверсия, по вертикали доход. Проведи пальцем или мышью по графику, чтобы поменять конверсию.</p>
+</section>
+
+<section class="card" id="range">
+  <h2>Конверсия — это вилка, а не число</h2>
+  <p class="sub">Выше мы взяли среднюю конверсию. В жизни на 50 лидах можно получить и 2, и 9 депозитов при одной и той же связке. Вот как это выглядит для твоих чисел.</p>
+
+  <div class="stackbar" id="stack" aria-hidden="true"><i id="s-crg" style="background:var(--crg)"></i><i id="s-tie" style="background:var(--tie)"></i><i id="s-cpa" style="background:var(--cpa)"></i></div>
+  <div class="probs">
+    <div class="prob"><div class="l"><i class="dot crg"></i>СРГ выгоднее</div><div class="v" id="p-crg"></div></div>
+    <div class="prob"><div class="l"><i class="dot tie"></i>Поровну</div><div class="v" id="p-tie"></div></div>
+    <div class="prob"><div class="l"><i class="dot cpa"></i>СПА выгоднее</div><div class="v" id="p-cpa"></div></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="l">В среднем на СПА</div><div class="v" id="e-cpa"></div></div>
+    <div class="stat"><div class="l">В среднем на СРГ</div><div class="v" id="e-crg"></div></div>
+    <div class="stat"><div class="l">Плохой исход СПА <small>(худшие 5%)</small></div><div class="v" id="w-cpa"></div></div>
+    <div class="stat"><div class="l">Плохой исход СРГ <small>(худшие 5%)</small></div><div class="v" id="w-crg"></div></div>
+  </div>
+  <p class="insight" id="insight"></p>
+
+  <div class="legend">
+    <span>Столбик = сколько депозитов получилось, высота = как часто так бывает</span>
+  </div>
+  <div class="chart" id="chart2" style="cursor:default"></div>
+  <p class="tip" id="tip"></p>
+</section>
+
+<section class="card" id="pick">
+  <h2>Что брать: три вопроса</h2>
+  <p class="sub">Быстрая подсказка по ситуации. Окончательное слово за калькулятором и условиями рекла.</p>
+  <div id="quiz"></div>
+  <div class="answer" id="answer" aria-live="polite"></div>
+</section>
+
+<section class="card" id="rules">
+  <h2>Правило большого пальца</h2>
+  <div class="rules" style="margin-top:12px">
+    <div class="rule">
+      <h3><span class="dot crg"></span>СРГ, когда</h3>
+      <ul>
+        <li>связка новая или оффер, гео, креатив меняются, конверсии ещё нет</li>
+        <li>идёт тест на небольшом объёме, где решает везение</li>
+        <li>надо гарантированно вернуть расход на трафик</li>
+        <li>реальная конверсия ожидается ниже гаранта или около него</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><span class="dot cpa"></span>СПА, когда</h3>
+      <ul>
+        <li>связка проверена и конверсия стабильно выше гаранта</li>
+        <li>объём большой, везение усредняется</li>
+        <li>есть запас по бюджету, и можно пережить плохую неделю</li>
+        <li>хочешь забирать весь апсайд, а не потолок по гаранту</li>
+      </ul>
+    </div>
+  </div>
+  <p class="chatnote">Формула границы: <b>конверсия = гарант %</b>. Ниже неё выигрывает СРГ, выше неё СПА. Гарант 10% и реальные 13% дают СПА +30% к выплате, но в любой конкретной пачке лидов СРГ всё равно может оказаться впереди.</p>
+</section>
+
+<section class="card" id="ask">
+  <h2>Спроси у рекла до старта</h2>
+  <p class="sub">Слова «1500+10» ничего не говорят о деталях. От них зависит, выгодна ли сделка.</p>
+  <ol class="check">
+    <li><span class="n">1</span><div>Это фикс или пол?<small>Платят только гарант или СПА за факт, но не ниже гаранта. От этого зависит весь расчёт.</small></div></li>
+    <li><span class="n">2</span><div>Ставка в СРГ такая же, как в СПА?<small>Часто в схеме с гарантом ставку режут. Подставь урезанную в калькулятор.</small></div></li>
+    <li><span class="n">3</span><div>На какой объём и срок считается гарант?<small>Минимум лидов, период, когда сверяют конверсию, и когда доплачивают.</small></div></li>
+    <li><span class="n">4</span><div>Какой лид считается валидным?<small>Что рекл вправе отсеять: дубли, не те гео, нет дозвона. От этого зависит, сколько лидов попадёт в расчёт.</small></div></li>
+    <li><span class="n">5</span><div>Холд и сроки выплат<small>Гарант на бумаге и деньги на счёте не одно и то же. Уточни, через сколько дней приходит выплата.</small></div></li>
+  </ol>
+</section>
+
+<footer>Цифры нужны, чтобы понять логику схем. Условия у каждого рекла свои, результат не гарантирован.</footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+var nf0=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0});
+var nf1=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1});
+var nf2=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2});
+var NB=' ';
+function money(v){var neg=v<-0.5;return (neg?'−':'')+nf0.format(Math.round(Math.abs(v)))+NB+'$'}
+function short(v){return v>=1000?nf1.format(v/1000)+'k':nf0.format(v)}
+function pct(x){var v=x*100;if(v>0&&v<1)return '<1%';if(v>99&&v<100)return '>99%';return nf0.format(Math.round(v))+'%'}
+
+var st={rate:1500,g:10,n:50,p:3,spend:0,mode:'fix'};
+var fields={
+  rate:{min:100,max:5000,step:50,hard:[1,1e6]},
+  g:{min:1,max:30,step:1,hard:[0,100]},
+  n:{min:5,max:300,step:5,hard:[1,2000]},
+  p:{min:0,max:40,step:0.5,hard:[0,100]}
+};
+
+/* ---------- модель ---------- */
+function model(){
+  var n=Math.round(st.n),rate=st.rate,gu=n*st.g/100,q=clamp(st.p/100,0,1);
+  var fix=st.mode==='fix';
+  function crgInc(k){return fix?gu*rate:Math.max(k,gu)*rate}
+  function cpaInc(k){return k*rate}
+  var kExp=n*q;
+  var lf=[0];for(var i=1;i<=n;i++)lf[i]=lf[i-1]+Math.log(i);
+  var pm=new Array(n+1);
+  for(var k=0;k<=n;k++){
+    if(q<=0)pm[k]=k===0?1:0;
+    else if(q>=1)pm[k]=k===n?1:0;
+    else pm[k]=Math.exp(lf[n]-lf[k]-lf[n-k]+k*Math.log(q)+(n-k)*Math.log(1-q));
+  }
+  var pCrg=0,pTie=0,pCpa=0,eCpa=0,eCrg=0,cdf=0,k5=null;
+  for(var j=0;j<=n;j++){
+    var a=cpaInc(j),b=crgInc(j),d=a-b;
+    if(Math.abs(d)<1e-6)pTie+=pm[j];else if(d>0)pCpa+=pm[j];else pCrg+=pm[j];
+    eCpa+=pm[j]*a;eCrg+=pm[j]*b;cdf+=pm[j];
+    if(k5===null&&cdf>=0.05)k5=j;
+  }
+  return {n:n,rate:rate,gu:gu,q:q,fix:fix,kExp:kExp,crgInc:crgInc,cpaInc:cpaInc,pm:pm,
+    pCrg:pCrg,pTie:pTie,pCpa:pCpa,eCpa:eCpa,eCrg:eCrg,k5:k5===null?0:k5};
+}
+
+/* ---------- блок результатов ---------- */
+function renderResults(m){
+  var cpa=m.cpaInc(m.kExp),crg=m.crgInc(m.kExp),diff=crg-cpa,spendTot=st.spend*m.n;
+  $('#cpa-inc').textContent=money(cpa);
+  $('#cpa-how').textContent=nf2.format(m.kExp)+' FTD × '+money(m.rate);
+  $('#crg-inc').textContent=money(crg);
+  if(m.fix)$('#crg-how').textContent=m.n+' лидов × '+money(m.rate*st.g/100)+' за лид';
+  else $('#crg-how').textContent='как за '+nf2.format(Math.max(m.kExp,m.gu))+' FTD × '+money(m.rate);
+  [['cpa',cpa],['crg',crg]].forEach(function(x){
+    var el=$('#'+x[0]+'-profit');
+    if(st.spend>0){var pr=x[1]-spendTot;el.textContent='Профит после трафика: '+money(pr);el.style.color=pr<0?'var(--bad)':'var(--good)'}
+    else{el.textContent='';}
+  });
+  var win=Math.abs(diff)<0.5?'tie':(diff>0?'crg':'cpa');
+  $('#res-cpa').className='res'+(win==='cpa'?' win cpa':'');
+  $('#res-crg').className='res'+(win==='crg'?' win crg':'');
+  $('#verdict').className='verdict '+(win==='tie'?'':win);
+  var t,x;
+  if(win==='tie'){
+    t='Поровну';
+    x=m.fix?'Конверсия ровно на уровне гаранта: обе схемы дают одно и то же.':'Выше пола схемы совпадают: СРГ ничего не добавляет и не отнимает.';
+  }else if(win==='crg'){
+    t='СРГ выгоднее на '+money(diff);
+    x=m.fix?'Конверсия ниже гаранта, и рекл доплачивает за недостающие депозиты.':'Конверсия ниже пола, и рекл доплачивает до гаранта.';
+  }else{
+    t='СПА выгоднее на '+money(-diff);
+    x='Конверсия выше гаранта, а в фиксированном СРГ потолок равен гаранту, так что всё, что выше, ты теряешь.';
+  }
+  $('#v-title').textContent=t;$('#v-text').textContent=x;
+  $('#be').innerHTML=m.fix
+    ?'Граница: <b>'+nf1.format(st.g)+'%</b> конверсии. Ниже неё выигрывает СРГ, выше неё СПА.'
+    :'В схеме с полом СРГ никогда не хуже СПА по тем же цифрам. Проверь, не режут ли ставку взамен.';
+  $('#modehint').textContent=m.fix
+    ?'Фикс: платят строго по гаранту, как в примере из чата. Выше гаранта ничего не добавят.'
+    :'Пол: платят СПА за реальные депозиты, но не меньше, чем по гаранту. Это самая выгодная для баера схема, но и самая редкая.';
+}
+
+/* ---------- график 1: доход от конверсии ---------- */
+function drawLine(m){
+  var el=$('#chart1');var W=el.clientWidth||320;var H=Math.round(clamp(W*0.55,220,300));
+  var mg={l:44,r:12,t:14,b:28},iw=W-mg.l-mg.r,ih=H-mg.t-mg.b;
+  var xmax=Math.max(40,Math.ceil(Math.max(st.g,st.p)*1.25/10)*10);
+  var ymax=m.rate*m.n*xmax/100;
+  var X=function(v){return mg.l+v/xmax*iw},Y=function(v){return mg.t+ih-v/ymax*ih};
+  var g=st.g,c=m.gu*m.rate;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="График дохода СПА и СРГ в зависимости от конверсии">';
+  // зоны
+  s+='<rect x="'+X(0)+'" y="'+mg.t+'" width="'+(X(Math.min(g,xmax))-X(0))+'" height="'+ih+'" style="fill:var(--crg-soft)"/>';
+  if(m.fix)s+='<rect x="'+X(g)+'" y="'+mg.t+'" width="'+(X(xmax)-X(g))+'" height="'+ih+'" style="fill:var(--cpa-soft)"/>';
+  // сетка
+  [0,.5,1].forEach(function(f){
+    var yy=Y(ymax*f);
+    s+='<line x1="'+mg.l+'" x2="'+(W-mg.r)+'" y1="'+yy+'" y2="'+yy+'" style="stroke:var(--grid)" stroke-width="1"/>';
+    s+='<text x="'+(mg.l-8)+'" y="'+(yy+4)+'" text-anchor="end">'+short(ymax*f)+'</text>';
+  });
+  for(var xv=0;xv<=xmax;xv+=10){
+    s+='<text x="'+X(xv)+'" y="'+(H-8)+'" text-anchor="middle">'+xv+'%</text>';
+  }
+  // подписи зон
+  var wl=X(g)-X(0),wr=X(xmax)-X(g);
+  if(wl>90)s+='<text x="'+(X(0)+wl/2)+'" y="'+(mg.t+14)+'" text-anchor="middle" style="fill:var(--crg);font-weight:700">СРГ выгоднее</text>';
+  if(m.fix&&wr>90)s+='<text x="'+(X(g)+wr/2)+'" y="'+(mg.t+14)+'" text-anchor="middle" style="fill:var(--cpa-ink);font-weight:700">СПА выгоднее</text>';
+  // линии
+  var crgPath=m.fix?('M'+X(0)+','+Y(c)+' L'+X(xmax)+','+Y(c)):('M'+X(0)+','+Y(c)+' L'+X(g)+','+Y(c)+' L'+X(xmax)+','+Y(ymax));
+  s+='<path d="'+crgPath+'" fill="none" style="stroke:var(--crg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  s+='<path d="M'+X(0)+','+Y(0)+' L'+X(xmax)+','+Y(ymax)+'" fill="none" style="stroke:var(--cpa)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="'+(m.fix?'0':'1 7')+'"/>';
+  // граница
+  if(m.fix){
+    s+='<circle cx="'+X(g)+'" cy="'+Y(c)+'" r="9" style="fill:var(--text);opacity:.14"/><circle cx="'+X(g)+'" cy="'+Y(c)+'" r="4" style="fill:var(--text)"/>';
+  }
+  // текущая точка
+  var px=clamp(st.p,0,xmax);
+  s+='<line x1="'+X(px)+'" x2="'+X(px)+'" y1="'+mg.t+'" y2="'+(mg.t+ih)+'" style="stroke:var(--text);opacity:.35" stroke-width="1.5" stroke-dasharray="3 4"/>';
+  var cpaY=Y(clamp(m.cpaInc(m.kExp),0,ymax)),crgY=Y(clamp(m.crgInc(m.kExp),0,ymax));
+  s+='<circle cx="'+X(px)+'" cy="'+cpaY+'" r="11" style="fill:var(--cpa);opacity:.2"/><circle cx="'+X(px)+'" cy="'+cpaY+'" r="6" style="fill:var(--cpa)"/>';
+  s+='<circle cx="'+X(px)+'" cy="'+crgY+'" r="11" style="fill:var(--crg);opacity:.2"/><circle cx="'+X(px)+'" cy="'+crgY+'" r="6" style="fill:var(--crg)"/>';
+  s+='</svg>';
+  el.innerHTML=s;
+  el._geom={mg:mg,iw:iw,xmax:xmax};
+}
+(function(){
+  var el=$('#chart1'),drag=false;
+  function setFrom(e){
+    var gm=el._geom;if(!gm)return;
+    var r=el.getBoundingClientRect();
+    var v=(e.clientX-r.left-gm.mg.l)/gm.iw*gm.xmax;
+    st.p=clamp(Math.round(v*2)/2,0,Math.max(40,gm.xmax));
+    render();
+  }
+  el.addEventListener('pointerdown',function(e){drag=true;try{el.setPointerCapture(e.pointerId)}catch(_){}setFrom(e)});
+  el.addEventListener('pointermove',function(e){if(drag)setFrom(e)});
+  el.addEventListener('pointerup',function(){drag=false});
+  el.addEventListener('pointercancel',function(){drag=false});
+})();
+
+/* ---------- график 2: распределение депозитов ---------- */
+function drawDist(m){
+  var el=$('#chart2');var W=el.clientWidth||320;var H=Math.round(clamp(W*0.5,200,260));
+  var mg={l:8,r:8,t:22,b:28},iw=W-mg.l-mg.r,ih=H-mg.t-mg.b;
+  var n=m.n,mean=n*m.q,sd=Math.sqrt(n*m.q*(1-m.q));
+  var lo=Math.max(0,Math.floor(mean-4*sd)),hi=Math.min(n,Math.ceil(mean+4*sd));
+  lo=Math.min(lo,Math.floor(m.gu));hi=Math.max(hi,Math.ceil(m.gu));
+  hi=Math.min(n,hi);
+  while(hi-lo<8&&(hi<n||lo>0)){if(hi<n)hi++;if(hi-lo<8&&lo>0)lo--}
+  var cnt=hi-lo+1,bw=iw/cnt,gap=bw>7?2:(bw>3.5?1:0);
+  var maxp=0;for(var k=lo;k<=hi;k++)maxp=Math.max(maxp,m.pm[k]);
+  if(maxp<=0)maxp=1;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Распределение числа депозитов">';
+  s+='<line x1="'+mg.l+'" x2="'+(W-mg.r)+'" y1="'+(mg.t+ih)+'" y2="'+(mg.t+ih)+'" style="stroke:var(--grid)" stroke-width="1"/>';
+  var bars=[];
+  for(var i=lo;i<=hi;i++){
+    var d=m.cpaInc(i)-m.crgInc(i);
+    var col=Math.abs(d)<1e-6?'var(--tie)':(d>0?'var(--cpa)':'var(--crg)');
+    var h=m.pm[i]/maxp*ih*0.95;var x=mg.l+(i-lo)*bw+gap/2;
+    s+='<rect class="bar" data-k="'+i+'" x="'+x+'" y="'+(mg.t+ih-h)+'" width="'+Math.max(1,bw-gap)+'" height="'+Math.max(h,m.pm[i]>0?1:0)+'" rx="'+Math.min(3,(bw-gap)/2)+'" style="fill:'+col+'"/>';
+  }
+  var step=1;while(cnt/step>7)step=step<2?2:(step<5?5:step*2);
+  for(var t=lo;t<=hi;t++){if((t-lo)%step===0)s+='<text x="'+(mg.l+(t-lo+.5)*bw)+'" y="'+(H-8)+'" text-anchor="middle">'+t+'</text>';}
+  // маркер гаранта
+  var gx=mg.l+(m.gu-lo+.5)*bw;
+  s+='<line x1="'+gx+'" x2="'+gx+'" y1="'+(mg.t-4)+'" y2="'+(mg.t+ih)+'" style="stroke:var(--text);opacity:.45" stroke-width="1.5" stroke-dasharray="3 4"/>';
+  var anchor=gx>W-80?'end':(gx<80?'start':'middle');
+  s+='<text x="'+gx+'" y="'+(mg.t-8)+'" text-anchor="'+anchor+'" style="fill:var(--text);font-weight:700">гарант '+nf1.format(m.gu)+' FTD</text>';
+  s+='</svg>';
+  el.innerHTML=s;
+  el._dist={mg:mg,bw:bw,lo:lo,hi:hi};
+  showTip(m,Math.round(clamp(mean,lo,hi)),true);
+}
+function showTip(m,k,auto){
+  var a=m.cpaInc(k),b=m.crgInc(k),d=a-b;
+  var who=Math.abs(d)<1e-6?'поровну':(d>0?'СПА лучше на '+money(d):'СРГ лучше на '+money(-d));
+  $('#tip').innerHTML=(auto?'Самый частый исход: ':'')+'<b>'+k+' FTD из '+m.n+'</b> (шанс '+pct(m.pm[k])+'). СПА '+money(a)+', СРГ '+money(b)+', '+who+'.'+(auto?' Проведи по столбикам, чтобы посмотреть другие исходы.':'');
+}
+(function(){
+  var el=$('#chart2');
+  function at(e){
+    var g=el._dist;if(!g||!window._m)return;
+    var r=el.getBoundingClientRect();
+    var i=Math.floor((e.clientX-r.left-g.mg.l)/g.bw);
+    if(i<0||i>g.hi-g.lo)return;
+    showTip(window._m,g.lo+i,false);
+  }
+  el.addEventListener('pointerdown',at);
+  el.addEventListener('pointermove',function(e){if(e.pointerType==='mouse'||e.buttons)at(e)});
+})();
+
+/* ---------- вероятности ---------- */
+function renderProbs(m){
+  $('#p-crg').textContent=pct(m.pCrg);$('#p-tie').textContent=pct(m.pTie);$('#p-cpa').textContent=pct(m.pCpa);
+  $('#s-crg').style.width=m.pCrg*100+'%';$('#s-tie').style.width=m.pTie*100+'%';$('#s-cpa').style.width=m.pCpa*100+'%';
+  $('#e-cpa').textContent=money(m.eCpa);$('#e-crg').textContent=money(m.eCrg);
+  var wc=m.cpaInc(m.k5),wg=m.crgInc(m.k5);
+  $('#w-cpa').textContent='до '+money(wc);$('#w-crg').textContent='от '+money(wg);
+  var t;
+  if(m.fix&&m.pCpa+m.pTie>=0.999&&st.p>=st.g){
+    t='Конверсия сильно выше гаранта, и СПА почти наверняка окажется впереди. Страховка тебе не нужна.';
+  }else if(m.fix&&m.pCrg>=0.8){
+    t='СРГ выигрывает в '+pct(m.pCrg)+' случаев: при такой конверсии и таком объёме гарант почти всегда оказывается выше факта.';
+  }else if(m.fix&&st.p>st.g){
+    t='В среднем СПА богаче на '+money(m.eCpa-m.eCrg)+', но в '+pct(m.pCrg)+' пачек СРГ всё равно будет впереди. Это цена вилки: СПА зарабатывает больше, но менее предсказуем.';
+  }else if(m.fix&&st.p<st.g){
+    t='В среднем СРГ богаче на '+money(m.eCrg-m.eCpa)+', а СПА обгонит его лишь в '+pct(m.pCpa)+' случаев. Чем меньше лидов, тем сильнее решает везение.';
+  }else if(m.fix){
+    t='Конверсия на границе: в среднем схемы равны, а исход пачки решает везение. СРГ даёт предсказуемость, СПА даёт шанс на большее.';
+  }else{
+    t='С полом СРГ не проигрывает ни в одном исходе. Единственная цена: возможно, урезанная ставка или жёсткие условия. Проверь это у рекла.';
+  }
+  $('#insight').textContent=t;
+}
+
+/* ---------- викторина ---------- */
+var QUIZ=[
+  {q:'Что известно про конверсию связки?',o:[
+    {t:'Стабильно выше гаранта',v:-2,w:'Конверсия связки выше гаранта: на СРГ ты отдавал бы разницу'},
+    {t:'Около гаранта',v:0,w:'Конверсия рядом с гарантом: тут решают объём и нервы'},
+    {t:'Не знаю, связка новая',v:2,w:'Нет истории конверсии: гарант страхует от слива на тесте'}]},
+  {q:'Сколько лидов будет за период?',o:[
+    {t:'Мало, это тест',v:1,w:'На малом объёме сильно решает везение, и СРГ его сглаживает'},
+    {t:'Средне',v:0,w:'Средний объём: везение уже частично усредняется'},
+    {t:'Много',v:-1,w:'На большом объёме разброс усредняется, и СПА выходит ближе к средней'}]},
+  {q:'Как с расходом на трафик?',o:[
+    {t:'Надо гарантированно вернуть',v:1,w:'Нужен минимум, который покрывает расход: это работа гаранта'},
+    {t:'Не критично',v:0,w:'Расход не давит: обе схемы терпимы'},
+    {t:'Есть запас, готов рисковать',v:-1,w:'Запас есть, можно ловить апсайд СПА'}]}
+];
+var quiz=[1,1,1];
+function renderQuiz(){
+  var host=$('#quiz');host.innerHTML='';
+  QUIZ.forEach(function(q,qi){
+    var d=document.createElement('div');d.className='q';
+    var h=document.createElement('h3');h.textContent=(qi+1)+'. '+q.q;d.appendChild(h);
+    var o=document.createElement('div');o.className='opts';
+    q.o.forEach(function(op,oi){
+      var b=document.createElement('button');b.type='button';b.className='opt'+(quiz[qi]===oi?' on':'');b.textContent=op.t;
+      b.addEventListener('click',function(){quiz[qi]=oi;renderQuiz()});
+      o.appendChild(b);
+    });
+    d.appendChild(o);host.appendChild(d);
+  });
+  var score=0,why=[];
+  quiz.forEach(function(oi,qi){var op=QUIZ[qi].o[oi];score+=op.v;why.push(op.w)});
+  var a=$('#answer'),cls,title;
+  if(score>=2){cls='crg';title='Бери СРГ'}
+  else if(score<=-2){cls='cpa';title='Бери СПА'}
+  else{cls='';title='Сигналы смешанные'}
+  a.className='answer '+cls;
+  var extra=cls===''?'<li>Посчитай свой случай в калькуляторе выше и уточни условия рекла: фикс или пол, ставка, объём.</li>':'';
+  a.innerHTML='<h3>'+title+'</h3><ul>'+why.map(function(w){return '<li>'+w+'</li>'}).join('')+extra+'</ul>';
+}
+
+/* ---------- ввод ---------- */
+function syncControls(skip){
+  Object.keys(fields).forEach(function(k){
+    var f=fields[k],rg=$('#rg-'+k),inp=$('#in-'+k);
+    rg.min=f.min;rg.max=f.max;rg.step=f.step;
+    rg.value=st[k];
+    rg.style.setProperty('--pct',(clamp(st[k],f.min,f.max)-f.min)/(f.max-f.min)*100+'%');
+    if(document.activeElement!==inp)inp.value=st[k];
+  });
+  if(document.activeElement!==$('#in-spend'))$('#in-spend').value=st.spend;
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',parseFloat(c.dataset.p)===st.p)});
+  document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===st.mode)});
+}
+Object.keys(fields).forEach(function(k){
+  var f=fields[k],rg=$('#rg-'+k),inp=$('#in-'+k);
+  rg.addEventListener('input',function(){st[k]=parseFloat(rg.value);if(k==='n')st[k]=Math.round(st[k]);render()});
+  inp.addEventListener('input',function(){
+    var v=parseFloat(String(inp.value).replace(',','.'));if(!isFinite(v))return;
+    v=clamp(v,f.hard[0],f.hard[1]);if(k==='n')v=Math.max(1,Math.round(v));
+    st[k]=v;render();
+  });
+  inp.addEventListener('blur',function(){inp.value=st[k]});
+});
+$('#in-spend').addEventListener('input',function(){
+  var v=parseFloat(String($('#in-spend').value).replace(',','.'));
+  st.spend=isFinite(v)?clamp(v,0,1e5):0;render();
+});
+$('#in-spend').addEventListener('blur',function(){$('#in-spend').value=st.spend});
+document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){st.p=parseFloat(c.dataset.p);render()})});
+document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){st.mode=b.dataset.mode;render()})});
+
+function render(){
+  syncControls();
+  var m=model();window._m=m;
+  renderResults(m);drawLine(m);renderProbs(m);drawDist(m);
+}
+renderQuiz();render();
+var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){var m=model();window._m=m;drawLine(m);drawDist(m)},80)});
+})();
+</script>
+</body>
+</html>
