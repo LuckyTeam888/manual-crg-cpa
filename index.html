@@ -2,644 +2,846 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>СРГ или СПА: что выгоднее</title>
-<meta name="description" content="Интерактивная шпаргалка для баера: как считать СРГ (CRG) и СПА (CPA), где проходит граница и что выбрать в вашей ситуации.">
-<meta name="theme-color" content="#0d0f13" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#e8eaf0" media="(prefers-color-scheme: light)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b63f0'/%3E%3Cpath d='M14 46L28 30l8 8 14-18' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>CPA, CPL или CRG: что выгоднее</title>
+<meta name="description" content="Интерактивная шпаргалка для баера: как считаются CPA, CPL и CRG и что выгоднее при вашей конверсии.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#E4E4E9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%231C1C1E'/%3E%3Cpath d='M14 44h14l16-22' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
+/* ---------- токены ---------- */
 :root{
-  --bg:#e8eaf0; --surface:#ffffff; --surface2:#f0f2f7; --surface3:#e2e6ee;
-  --text:#13151a; --muted:#646a7a; --grid:rgba(19,21,26,.09);
-  --crg:#2b63f0; --crg-soft:rgba(43,99,240,.12);
-  --cpa:#e8780a; --cpa-ink:#b45300; --cpa-soft:rgba(232,120,10,.14);
-  --good:#0f8f52; --bad:#d23a3a; --tie:#9aa1b2;
-  --seg-active:#ffffff;
-  --shadow:0 1px 2px rgba(18,24,40,.05), 0 12px 32px rgba(18,24,40,.09);
-  --shadow-sm:0 1px 3px rgba(18,24,40,.18);
-  color-scheme:light;
+  color-scheme:light dark;
+  --bg:#E4E4E9;            /* фон страницы */
+  --surface:#FFFFFF;       /* поверхность */
+  --fill:#F2F2F6;          /* поверхность на поверхности */
+  --fill-2:#E6E6EB;
+  --label:#1C1C1E;
+  --label-2:#5C5C62;
+  --sep:rgba(60,60,67,.16);
+  --hl:rgba(60,60,67,.08);
+  --track:rgba(120,120,128,.22);
+  --slider:#3A3A3C;
+  --thumb-seg:#FFFFFF;
+  --focus:#0A74FF;
+  --red:#D70015;
+  --shadow:0 1px 2px rgba(20,20,40,.05),0 8px 24px rgba(20,20,40,.09);
+  --shadow-s:0 1px 2px rgba(0,0,0,.14),0 3px 8px rgba(0,0,0,.10);
+  --shadow-knob:0 1px 3px rgba(0,0,0,.28),0 4px 10px rgba(0,0,0,.14);
+  --glass:rgba(246,246,250,.74);
+  --glass-solid:#F6F6FA;
+  --glass-shadow:0 8px 28px rgba(20,20,40,.16),0 2px 6px rgba(20,20,40,.08);
+
+  --cpa:#E67300; --cpa-ink:#A85200; --cpa-soft:rgba(230,115,0,.14); --cpa-on:#FFFFFF;
+  --cpl:#0E9F7E; --cpl-ink:#0A7A5F; --cpl-soft:rgba(14,159,126,.14); --cpl-on:#FFFFFF;
+  --crg:#0A74FF; --crg-ink:#0060DF; --crg-soft:rgba(10,116,255,.12); --crg-on:#FFFFFF;
+
+  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --bg:#0d0f13; --surface:#171a21; --surface2:#21252f; --surface3:#2c3140;
-    --text:#eef0f5; --muted:#8c93a4; --grid:rgba(238,240,245,.09);
-    --crg:#6b94ff; --crg-soft:rgba(107,148,255,.16);
-    --cpa:#ffa340; --cpa-ink:#ffa340; --cpa-soft:rgba(255,163,64,.16);
-    --good:#3ecf8e; --bad:#ff6b6b; --tie:#5d6579;
-    --seg-active:#3a4156;
-    --shadow:0 12px 32px rgba(0,0,0,.35);
-    --shadow-sm:0 1px 4px rgba(0,0,0,.5);
-    color-scheme:dark;
+    --bg:#0B0B0D; --surface:#1C1C1E; --fill:#2C2C2E; --fill-2:#3A3A3C;
+    --label:#F2F2F7; --label-2:#A4A4AC;
+    --sep:rgba(84,84,88,.6); --hl:rgba(235,235,245,.09); --track:rgba(120,120,128,.4);
+    --slider:#D1D1D6; --thumb-seg:#636366; --focus:#4DA3FF; --red:#FF6961;
+    --shadow:0 8px 24px rgba(0,0,0,.45); --shadow-s:0 1px 3px rgba(0,0,0,.45);
+    --shadow-knob:0 1px 3px rgba(0,0,0,.5),0 4px 10px rgba(0,0,0,.35);
+    --glass:rgba(44,44,46,.68); --glass-solid:#2C2C2E;
+    --glass-shadow:0 8px 28px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4);
+    --cpa:#FF9F0A; --cpa-ink:#FF9F0A; --cpa-soft:rgba(255,159,10,.18); --cpa-on:#1C1C1E;
+    --cpl:#34D399; --cpl-ink:#34D399; --cpl-soft:rgba(52,211,153,.17); --cpl-on:#1C1C1E;
+    --crg:#4DA3FF; --crg-ink:#4DA3FF; --crg-soft:rgba(77,163,255,.2); --crg-on:#1C1C1E;
   }
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
-body{
-  background:var(--bg);color:var(--text);
-  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  padding:max(20px,env(safe-area-inset-top)) 16px max(40px,env(safe-area-inset-bottom));
+/* continuous corners там, где браузер умеет */
+@supports (corner-shape:squircle){
+  :root{--r-lg:26px;--r-md:18px;--r-sm:12px}
+  .card,.tile,.fmt-glyph,.num,.seg,.thumb,.seg button,.formula,.pill,.pi,.when{corner-shape:squircle}
 }
-.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-h1,h2,h3{letter-spacing:-.02em;line-height:1.15}
-.hero{padding:20px 4px 8px}
-.eyebrow{font-size:13px;font-weight:600;color:var(--crg);letter-spacing:.02em;text-transform:uppercase;margin-bottom:10px}
-h1{font-size:clamp(30px,7vw,44px);font-weight:750;margin-bottom:12px}
-.lead{font-size:17px;color:var(--muted);max-width:60ch}
-.card{background:var(--surface);border-radius:24px;padding:20px;box-shadow:var(--shadow)}
-.card>h2{font-size:22px;font-weight:700;margin-bottom:6px}
-.sub{color:var(--muted);font-size:15px;margin-bottom:16px}
-.crg-c{color:var(--crg)} .cpa-c{color:var(--cpa-ink)}
-b{font-weight:650}
 
-/* схемы */
-.two{display:grid;gap:12px;grid-template-columns:1fr}
-@media(min-width:640px){.two{grid-template-columns:1fr 1fr}}
-.scheme{background:var(--surface2);border-radius:18px;padding:16px}
-.scheme h3{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
-.dot.crg{background:var(--crg)} .dot.cpa{background:var(--cpa)} .dot.tie{background:var(--tie)}
-.scheme p{font-size:15px;color:var(--muted)}
-.formula{margin-top:12px;background:var(--surface);border-radius:12px;padding:10px 12px;font-size:14px;font-variant-numeric:tabular-nums}
-.chatnote{margin-top:12px;font-size:14px;color:var(--muted);background:var(--surface2);border-radius:14px;padding:12px 14px}
+/* ---------- база ---------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{
+  background:var(--bg);
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+  scroll-padding-top:64px;
+}
+body{
+  min-height:100vh;min-height:100dvh;
+  background:var(--bg);color:var(--label);
+  font:400 17px/1.3 var(--font);
+  letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input{font:inherit;color:inherit;letter-spacing:inherit;background:none;border:0;border-radius:0}
+button{cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;text-align:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.num:focus-within{outline:2px solid var(--focus);outline-offset:1px}
+input:focus-visible{outline:none}
+[hidden]{display:none!important}
+.tnum{font-variant-numeric:tabular-nums}
 
-/* контролы */
-.controls{display:grid;gap:14px 24px;grid-template-columns:1fr}
-@media(min-width:640px){.controls{grid-template-columns:1fr 1fr}}
-.field .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.field label{font-size:15px;font-weight:600}
-.field small{display:block;color:var(--muted);font-weight:400;font-size:13px}
-.num{display:flex;align-items:center;gap:4px;background:var(--surface2);border-radius:12px;padding:0 10px;height:38px;min-width:96px}
-.num input{width:72px;background:transparent;color:var(--text);font:inherit;font-weight:650;text-align:right;border:0;outline:0;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
-.num input::-webkit-outer-spin-button,.num input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.num span{color:var(--muted);font-weight:600}
-.num:focus-within{box-shadow:0 0 0 2px var(--crg)}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;touch-action:pan-y;--pct:50%;--fill:var(--crg);cursor:pointer}
-input[type=range]:focus{outline:none}
-input[type=range]:focus-visible{outline:2px solid var(--crg);outline-offset:2px;border-radius:8px}
-input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--fill) var(--pct),var(--surface3) var(--pct))}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm)}
-input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--surface3)}
-input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--fill)}
-input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm)}
-.f-cpa{--fill:var(--cpa)}
+.page{
+  max-width:760px;margin:0 auto;
+  padding:calc(env(safe-area-inset-top,0px) + 28px) calc(16px + env(safe-area-inset-right,0px)) calc(136px + env(safe-area-inset-bottom,0px)) calc(16px + env(safe-area-inset-left,0px));
+}
+@media (min-width:720px){.page{padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-left:20px;padding-right:20px}}
 
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 4px}
-.chip{font:inherit;font-size:14px;font-weight:600;color:var(--text);background:var(--surface2);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;transition:background .15s,transform .15s}
-.chip:active{transform:scale(.96)}
-.chip.on{background:var(--text);color:var(--surface)}
-.chip:focus-visible,.seg button:focus-visible,.opt:focus-visible{outline:2px solid var(--crg);outline-offset:2px}
+/* ---------- стекло: только слой навигации ---------- */
+.glass{
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  backdrop-filter:blur(26px) saturate(180%);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:var(--glass-solid)}}
+@media (prefers-reduced-transparency:reduce){.glass{background:var(--glass-solid);-webkit-backdrop-filter:none;backdrop-filter:none}}
 
-.seg{display:inline-flex;background:var(--surface2);border-radius:12px;padding:3px;gap:2px;max-width:100%}
-.seg button{font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:transparent;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;transition:background .15s,color .15s}
-.seg button.on{background:var(--seg-active);color:var(--text);box-shadow:var(--shadow-sm)}
-.modehint{font-size:13px;color:var(--muted);margin-top:8px}
-details.more{margin-top:14px}
-details.more summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::after{content:" ▾"}
-details.more[open] summary::after{content:" ▴"}
-details.more .field{margin-top:12px;max-width:340px}
+.navbar{
+  position:fixed;z-index:20;top:0;left:0;right:0;
+  height:calc(48px + env(safe-area-inset-top,0px));
+  padding-top:env(safe-area-inset-top,0px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:600;
+  box-shadow:0 10px 24px rgba(20,20,40,.07);
+  opacity:0;transform:translateY(-8px);pointer-events:none;
+  transition:opacity .25s var(--ease),transform .35s var(--ease);
+}
+.navbar.on{opacity:1;transform:none}
 
-/* результаты */
-.results{display:grid;gap:12px;grid-template-columns:1fr;margin-top:18px}
-@media(min-width:520px){.results{grid-template-columns:1fr 1fr}}
-.res{border-radius:18px;padding:16px;background:var(--surface2)}
-.res .tag{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-.res .big{font-size:clamp(28px,7vw,36px);font-weight:750;letter-spacing:-.03em;margin:6px 0 2px;font-variant-numeric:tabular-nums}
-.res .how{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
-.res .profit{font-size:14px;margin-top:6px;font-weight:600;font-variant-numeric:tabular-nums}
-.res.win.crg{background:var(--crg-soft)} .res.win.cpa{background:var(--cpa-soft)}
-.verdict{margin-top:12px;border-radius:18px;padding:16px;background:var(--surface2)}
-.verdict.crg{background:var(--crg-soft)} .verdict.cpa{background:var(--cpa-soft)}
-.verdict h3{font-size:20px;font-weight:750;margin-bottom:4px}
-.verdict.crg h3{color:var(--crg)} .verdict.cpa h3{color:var(--cpa-ink)}
-.verdict p{font-size:15px;color:var(--muted)}
-.be{margin-top:10px;font-size:14px}
-.be b{color:var(--text)}
+/* ---------- заголовок ---------- */
+h1{
+  font-size:clamp(34px,5.4vw,44px);line-height:1.1;font-weight:700;
+  letter-spacing:-.024em;text-wrap:balance;
+}
+.lead{margin-top:12px;font-size:17px;line-height:1.35;color:var(--label-2);max-width:34em;text-wrap:pretty}
+h2{font-size:24px;line-height:1.2;font-weight:700;letter-spacing:-.02em}
+.sect{margin-top:48px}
+.sect>h2{margin:0 4px 12px}
+.cap{margin:20px 16px 8px;font-size:13px;line-height:1.3;color:var(--label-2);letter-spacing:-.003em}
+.cap:first-of-type{margin-top:0}
 
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:20px 0 6px}
-.legend span{display:flex;align-items:center;gap:6px}
-.chart{width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:ew-resize}
-.chart svg{display:block;width:100%;height:auto;overflow:visible}
-.chart text{font-family:inherit;fill:var(--muted);font-size:11.5px}
-.hint{font-size:13px;color:var(--muted);margin-top:6px}
+/* ---------- карточка и строки ---------- */
+.card{
+  background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;
+}
+.row{position:relative;padding:12px 16px 4px}
+.row+.row::before,.sep-top::before{
+  content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep);
+}
+.sep-top{position:relative}
 
-/* вероятности */
-.stackbar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--surface2);margin:4px 0 12px}
-.stackbar i{display:block;height:100%;transition:width .3s ease}
-.probs{display:grid;gap:8px;grid-template-columns:1fr}
-@media(min-width:520px){.probs{grid-template-columns:repeat(3,1fr)}}
-.prob{background:var(--surface2);border-radius:14px;padding:12px 14px}
-.prob .v{font-size:24px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.prob .l{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.stat{background:var(--surface2);border-radius:14px;padding:12px 14px}
-.stat .l{font-size:13px;color:var(--muted)}
-.stat .v{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
-.stat .v small{font-size:13px;font-weight:500;color:var(--muted)}
-.insight{margin-top:12px;font-size:15px;background:var(--surface2);border-radius:14px;padding:12px 14px}
-.tip{min-height:42px;margin-top:8px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
-.tip b{color:var(--text)}
+/* ---------- три формата ---------- */
+.formats{list-style:none}
+.fmt{position:relative;display:flex;gap:16px;padding:16px}
+.fmt+.fmt::before{content:"";position:absolute;left:76px;right:0;top:0;height:.5px;background:var(--sep)}
+.cpa{--c:var(--cpa);--ink:var(--cpa-ink);--soft:var(--cpa-soft);--on:var(--cpa-on)}
+.cpl{--c:var(--cpl);--ink:var(--cpl-ink);--soft:var(--cpl-soft);--on:var(--cpl-on)}
+.crg{--c:var(--crg);--ink:var(--crg-ink);--soft:var(--crg-soft);--on:var(--crg-on)}
+.fmt-glyph{flex:none;width:44px;height:44px;border-radius:var(--r-sm);background:var(--soft);display:grid;place-items:center}
+.fmt-glyph svg{width:30px;height:24px;overflow:visible}
+.fmt h3{font-size:17px;line-height:1.25;font-weight:600;color:var(--ink);letter-spacing:-.014em}
+.fmt p{margin-top:2px;font-size:15px;line-height:1.35;color:var(--label-2);letter-spacing:-.008em;text-wrap:pretty}
+.formula{
+  display:inline-block;margin-top:8px;padding:4px 10px;border-radius:8px;background:var(--fill);
+  font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums;letter-spacing:0;color:var(--label);
+}
 
-/* викторина */
-.q{margin-top:16px}
-.q h3{font-size:15px;font-weight:650;margin-bottom:8px}
-.opts{display:grid;gap:6px;grid-template-columns:1fr}
-@media(min-width:640px){.opts{grid-template-columns:repeat(3,1fr)}}
-.opt{font:inherit;font-size:14px;font-weight:600;text-align:left;color:var(--text);background:var(--surface2);border:0;border-radius:14px;padding:12px 14px;cursor:pointer;transition:background .15s,transform .15s}
-.opt:active{transform:scale(.98)}
-.opt.on{background:var(--text);color:var(--surface)}
-.answer{margin-top:18px;border-radius:18px;padding:18px;background:var(--surface2)}
-.answer.crg{background:var(--crg-soft)} .answer.cpa{background:var(--cpa-soft)}
-.answer h3{font-size:24px;font-weight:750;margin-bottom:8px}
-.answer.crg h3{color:var(--crg)} .answer.cpa h3{color:var(--cpa-ink)}
-.answer ul{margin-left:18px;color:var(--muted);font-size:15px;display:grid;gap:4px}
-.answer li::marker{color:var(--muted)}
+/* ---------- поля ---------- */
+.rh{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rh label{display:block;min-width:0;cursor:pointer}
+.rh .t{display:block;font-size:17px;line-height:1.25;font-weight:500}
+.rh .h{display:block;margin-top:1px;font-size:13px;line-height:1.3;color:var(--label-2);letter-spacing:-.003em}
+.num{
+  flex:none;display:flex;align-items:center;gap:2px;height:40px;padding:0 12px;border-radius:var(--r-sm);
+  background:var(--fill);
+}
+.num input{
+  width:76px;height:100%;text-align:right;font-size:17px;font-weight:600;
+  font-variant-numeric:tabular-nums;-webkit-appearance:none;appearance:none;
+}
+.num .u{font-size:17px;font-weight:600;color:var(--label-2);min-width:10px}
 
-/* чеклист */
-.check{display:grid;gap:8px;list-style:none}
-.check li{display:flex;gap:12px;align-items:flex-start;background:var(--surface2);border-radius:14px;padding:12px 14px;font-size:15px}
-.check .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--surface);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
-.check small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
-.rules{display:grid;gap:12px;grid-template-columns:1fr}
-@media(min-width:640px){.rules{grid-template-columns:1fr 1fr}}
-.rule{background:var(--surface2);border-radius:18px;padding:16px}
-.rule h3{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.rule ul{margin-left:18px;font-size:15px;color:var(--muted);display:grid;gap:5px}
-footer{color:var(--muted);font-size:13px;padding:8px 8px 0;text-align:center}
+.rng{
+  --p:.5;
+  -webkit-appearance:none;appearance:none;display:block;width:100%;height:44px;margin:0;background:transparent;
+  touch-action:pan-y;cursor:pointer;
+}
+.rng:focus-visible{outline-offset:-4px;border-radius:12px}
+.rng::-webkit-slider-runnable-track{
+  height:6px;border-radius:3px;
+  background:linear-gradient(to right,var(--slider) calc(var(--p)*(100% - 28px) + 14px),var(--track) 0);
+}
+.rng::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-11px;border-radius:50%;
+  background:#fff;box-shadow:var(--shadow-knob);
+  transition:transform .28s var(--ease);
+}
+.rng:active::-webkit-slider-thumb{transform:scale(1.12)}
+.rng::-moz-range-track{height:6px;border-radius:3px;background:var(--track)}
+.rng::-moz-range-progress{height:6px;border-radius:3px;background:var(--slider)}
+.rng::-moz-range-thumb{width:28px;height:28px;border:0;border-radius:50%;background:#fff;box-shadow:var(--shadow-knob)}
 
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* сегменты быстрых значений */
+.seg{position:relative;display:flex;margin:4px 0 12px;padding:3px;border-radius:var(--r-md);background:var(--fill)}
+.thumb{
+  position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/3);border-radius:calc(var(--r-md) - 3px);
+  background:var(--thumb-seg);box-shadow:var(--shadow-s);will-change:transform;
+  transition:opacity .2s ease-out;
+}
+.seg button{
+  position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px 6px;
+  border-radius:calc(var(--r-md) - 3px);color:var(--label-2);
+  transition:transform .15s var(--ease);
+}
+.seg button:active{transform:scale(.97)}
+.seg button b{font-size:17px;line-height:1.2;font-weight:600;font-variant-numeric:tabular-nums;color:var(--label-2);transition:color .2s}
+.seg button span{font-size:11px;line-height:1.2;letter-spacing:.01em}
+.seg button[aria-pressed=true] b{color:var(--label)}
+.seg button[aria-pressed=true] span{color:var(--label)}
+
+/* дополнительно */
+.adv-btn{
+  position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:14px 16px;font-size:17px;font-weight:500;
+  transition:background .15s;
+}
+.adv-btn::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep)}
+.adv-btn:active{background:var(--hl)}
+.chev{width:12px;height:12px;color:var(--label-2);transition:transform .45s var(--ease)}
+.adv-btn[aria-expanded=true] .chev{transform:rotate(90deg)}
+.adv-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.adv-panel.open{grid-template-rows:1fr}
+.adv-in{overflow:hidden;min-height:0}
+.adv-in .row:first-child::before{display:block}
+
+/* ---------- результат ---------- */
+.res{padding:12px;display:grid;gap:8px}
+.tile{
+  display:grid;grid-template-columns:1fr auto;grid-template-areas:"th tv" "tc tv" "tp tp";
+  column-gap:12px;align-items:center;
+  padding:12px 16px;border-radius:var(--r-md);background:var(--fill);
+  transition:background .35s var(--ease);
+}
+.tile.best{background:var(--soft)}
+.th{grid-area:th;display:flex;align-items:center;gap:8px;min-height:24px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none;display:inline-block}
+.tn{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.006em}
+.badge{
+  font-size:11px;line-height:1;font-weight:600;letter-spacing:.01em;padding:4px 8px;border-radius:999px;
+  background:var(--ink);color:var(--on);
+  opacity:0;transform:scale(.85);transform-origin:left center;
+  transition:opacity .25s var(--ease),transform .4s var(--ease);
+}
+.tile.best .badge{opacity:1;transform:none}
+.tv{grid-area:tv;justify-self:end;font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.022em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tc{grid-area:tc;font-size:13px;line-height:1.35;color:var(--label-2);font-variant-numeric:tabular-nums;letter-spacing:0}
+.tp{grid-area:tp;margin-top:6px;font-size:13px;line-height:1.35;color:var(--label-2);font-variant-numeric:tabular-nums;letter-spacing:0}
+.tp b{font-weight:600;color:var(--label)}
+.tp b.neg{color:var(--red)}
+@media (min-width:640px){
+  .res{grid-template-columns:repeat(3,1fr)}
+  .tile{grid-template-columns:1fr;grid-template-areas:"th" "tv" "tc" "tp";padding:14px 16px 16px;row-gap:2px;align-items:start}
+  .tv{justify-self:start;font-size:30px;margin-top:4px}
+}
+.say{padding:14px 16px 4px;font-size:17px;line-height:1.35;font-weight:400;letter-spacing:-.014em;text-wrap:pretty}
+.edge{padding:6px 16px 16px;font-size:13px;line-height:1.4;color:var(--label-2);letter-spacing:-.003em}
+.edge b{font-weight:600;color:var(--label)}
+
+/* ---------- график ---------- */
+.chart-card{padding:16px 12px 12px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;touch-action:pan-y;-webkit-user-select:none;user-select:none;cursor:grab;overflow:hidden;border-radius:var(--r-sm)}
+.chart svg:active{cursor:grabbing}
+.chart svg:focus-visible{outline-offset:0}
+.chart text{font-family:var(--font);font-size:11px;fill:var(--label-2);font-variant-numeric:tabular-nums;letter-spacing:0}
+.chart .gl{stroke:var(--sep);stroke-width:.5}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;padding:12px 4px 0;font-size:13px;color:var(--label-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{width:26px;height:10px;overflow:visible}
+.hint{padding:8px 4px 4px;font-size:13px;line-height:1.35;color:var(--label-2)}
+
+/* ---------- когда что брать ---------- */
+.when-grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:720px){.when-grid{grid-template-columns:repeat(3,1fr)}}
+.when{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.when h3{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.016em}
+.when ul{list-style:none}
+.when li{position:relative;display:flex;gap:10px;align-items:flex-start;padding:10px 16px;font-size:15px;line-height:1.3;letter-spacing:-.008em}
+.when li::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep)}
+.when li svg{flex:none;width:18px;height:18px;margin-top:1px;color:var(--c)}
+.when li:last-child{padding-bottom:14px}
+
+footer{margin:32px 16px 0;font-size:13px;line-height:1.4;color:var(--label-2);text-align:center;text-wrap:balance}
+.swiss{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:12px;letter-spacing:.02em}
+.swiss svg{flex:none;display:block}
+
+/* ---------- плавающая сводка ---------- */
+.pill{
+  position:fixed;z-index:20;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  width:min(calc(100% - 24px),520px);padding:6px;border-radius:26px;box-shadow:var(--glass-shadow);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:4px;
+  transform:translate(-50%,calc(100% + 40px));opacity:0;pointer-events:none;
+  transition:transform .5s var(--ease),opacity .25s ease-out;
+}
+.pill.on{transform:translate(-50%,0);opacity:1}
+.pi{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px 7px;border-radius:20px;transition:background .3s var(--ease)}
+.pi.best{background:var(--soft)}
+.pl{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:1.2;font-weight:600;color:var(--label-2);letter-spacing:.01em}
+.pl .dot{width:8px;height:8px}
+.pi.best .pl{color:var(--ink)}
+.pv{font-size:17px;line-height:1.2;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.014em;white-space:nowrap}
+
+/* ---------- появление при прокрутке ---------- */
+.js .rv{opacity:0;transform:translateY(14px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .55s ease-out,transform .7s var(--ease)}
+
+/* ---------- hover только для мыши ---------- */
+@media (hover:hover) and (pointer:fine){
+  .adv-btn:hover{background:var(--hl)}
+  .seg button:hover b{color:var(--label)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .js .rv{opacity:1;transform:none}
+  .navbar{transform:none}
+  .pill,.pill.on{transform:translate(-50%,0)}
+}
 </style>
 </head>
 <body>
-<main class="wrap">
 
-<header class="hero">
-  <p class="eyebrow">Шпаргалка для баера</p>
-  <h1>СРГ или СПА: что выгоднее</h1>
-  <p class="lead">СПА платят за каждый депозит. СРГ гарантирует минимальную конверсию, и ты получаешь деньги, даже если лиды не дошли до депозита. Двигай ползунки: увидишь, где проходит граница и когда какая схема сильнее.</p>
-</header>
+<div class="navbar glass" id="navbar" aria-hidden="true">CPA, CPL или CRG</div>
 
-<section class="card" id="how">
-  <h2>Две схемы за минуту</h2>
-  <p class="sub">Один и тот же оффер, разный способ получить деньги.</p>
-  <div class="two">
-    <div class="scheme">
-      <h3><span class="dot cpa"></span>СПА <span style="font-weight:500;color:var(--muted)">(CPA)</span></h3>
-      <p>Рекл платит ставку за каждый FTD, то есть за первый депозит. Конверсия выше, чем ждал, и ты зарабатываешь больше. Ниже, и меньше. Нет депозитов, нет денег.</p>
-      <div class="formula">доход = лиды × конверсия × ставка</div>
-    </div>
-    <div class="scheme">
-      <h3><span class="dot crg"></span>СРГ <span style="font-weight:500;color:var(--muted)">(CRG)</span></h3>
-      <p>Рекл гарантирует конверсию, например 10%. Реально вышло 3%, а платят как за 10%. Взамен «сверху» ты ничего не получаешь: потолок тот же, что и гарант.</p>
-      <div class="formula">доход = лиды × гарант % × ставка</div>
-    </div>
-  </div>
-  <p class="chatnote">Пример из переписки: <b>СРГ 1500+10</b> значит ставка 1500 $ и гарант 10%. Гарант на каждый лид это 1500 × 0,1 = <b>150 $</b>. На 50 лидов получается <b>7 500 $</b> при любой конверсии.</p>
-</section>
+<main class="page">
 
-<section class="card" id="calc">
-  <h2>Посчитай свой случай</h2>
-  <p class="sub">Подставь условия оффера и реальную конверсию связки.</p>
+  <header class="rv">
+    <h1>CPA, CPL или CRG: что выгоднее</h1>
+    <p class="lead">Три способа получить деньги с одного оффера. Подставь свои цифры и смотри, где проходит граница.</p>
+  </header>
 
-  <div class="controls">
-    <div class="field">
-      <div class="row"><label for="in-rate">Ставка за FTD</label><div class="num"><input id="in-rate" type="number" inputmode="decimal" min="1"><span>$</span></div></div>
-      <input id="rg-rate" type="range" class="f-cpa" aria-label="Ставка за FTD">
-    </div>
-    <div class="field">
-      <div class="row"><label for="in-g">Гарант СРГ</label><div class="num"><input id="in-g" type="number" inputmode="decimal" min="0"><span>%</span></div></div>
-      <input id="rg-g" type="range" aria-label="Гарант СРГ">
-    </div>
-    <div class="field">
-      <div class="row"><label for="in-n">Сколько лидов</label><div class="num"><input id="in-n" type="number" inputmode="numeric" min="1"><span>шт</span></div></div>
-      <input id="rg-n" type="range" aria-label="Количество лидов">
-    </div>
-    <div class="field">
-      <div class="row"><label for="in-p">Реальная конверсия<small>лид → депозит</small></label><div class="num"><input id="in-p" type="number" inputmode="decimal" min="0"><span>%</span></div></div>
-      <input id="rg-p" type="range" aria-label="Реальная конверсия">
-    </div>
-  </div>
-
-  <div class="chips" role="group" aria-label="Быстрые примеры" style="margin-top:12px">
-    <button class="chip" data-p="3">3% — слабая связка</button>
-    <button class="chip" data-p="10">10% — ровно гарант</button>
-    <button class="chip" data-p="13">13% — сильная связка</button>
-  </div>
-
-  <div style="margin-top:14px">
-    <div class="seg" role="group" aria-label="Как устроен СРГ">
-      <button data-mode="fix" class="on">СРГ фикс</button>
-      <button data-mode="floor">СРГ с полом</button>
-    </div>
-    <p class="modehint" id="modehint"></p>
-  </div>
-
-  <details class="more">
-    <summary>Учесть расход на трафик</summary>
-    <div class="field">
-      <div class="row"><label for="in-spend">Расход на один лид</label><div class="num"><input id="in-spend" type="number" inputmode="decimal" min="0"><span>$</span></div></div>
-    </div>
-  </details>
-
-  <div class="results">
-    <div class="res" id="res-cpa">
-      <div class="tag"><span class="dot cpa"></span>СПА</div>
-      <div class="big" id="cpa-inc"></div>
-      <div class="how" id="cpa-how"></div>
-      <div class="profit" id="cpa-profit"></div>
-    </div>
-    <div class="res" id="res-crg">
-      <div class="tag"><span class="dot crg"></span>СРГ</div>
-      <div class="big" id="crg-inc"></div>
-      <div class="how" id="crg-how"></div>
-      <div class="profit" id="crg-profit"></div>
-    </div>
-  </div>
-
-  <div class="verdict" id="verdict" aria-live="polite">
-    <h3 id="v-title"></h3>
-    <p id="v-text"></p>
-    <p class="be" id="be"></p>
-  </div>
-
-  <div class="legend">
-    <span><i class="dot cpa"></i>Доход на СПА</span>
-    <span><i class="dot crg"></i>Доход на СРГ</span>
-  </div>
-  <div class="chart" id="chart1"></div>
-  <p class="hint">По горизонтали конверсия, по вертикали доход. Проведи пальцем или мышью по графику, чтобы поменять конверсию.</p>
-</section>
-
-<section class="card" id="range">
-  <h2>Конверсия — это вилка, а не число</h2>
-  <p class="sub">Выше мы взяли среднюю конверсию. В жизни на 50 лидах можно получить и 2, и 9 депозитов при одной и той же связке. Вот как это выглядит для твоих чисел.</p>
-
-  <div class="stackbar" id="stack" aria-hidden="true"><i id="s-crg" style="background:var(--crg)"></i><i id="s-tie" style="background:var(--tie)"></i><i id="s-cpa" style="background:var(--cpa)"></i></div>
-  <div class="probs">
-    <div class="prob"><div class="l"><i class="dot crg"></i>СРГ выгоднее</div><div class="v" id="p-crg"></div></div>
-    <div class="prob"><div class="l"><i class="dot tie"></i>Поровну</div><div class="v" id="p-tie"></div></div>
-    <div class="prob"><div class="l"><i class="dot cpa"></i>СПА выгоднее</div><div class="v" id="p-cpa"></div></div>
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="l">В среднем на СПА</div><div class="v" id="e-cpa"></div></div>
-    <div class="stat"><div class="l">В среднем на СРГ</div><div class="v" id="e-crg"></div></div>
-    <div class="stat"><div class="l">Плохой исход СПА <small>(худшие 5%)</small></div><div class="v" id="w-cpa"></div></div>
-    <div class="stat"><div class="l">Плохой исход СРГ <small>(худшие 5%)</small></div><div class="v" id="w-crg"></div></div>
-  </div>
-  <p class="insight" id="insight"></p>
-
-  <div class="legend">
-    <span>Столбик = сколько депозитов получилось, высота = как часто так бывает</span>
-  </div>
-  <div class="chart" id="chart2" style="cursor:default"></div>
-  <p class="tip" id="tip"></p>
-</section>
-
-<section class="card" id="pick">
-  <h2>Что брать: три вопроса</h2>
-  <p class="sub">Быстрая подсказка по ситуации. Окончательное слово за калькулятором и условиями рекла.</p>
-  <div id="quiz"></div>
-  <div class="answer" id="answer" aria-live="polite"></div>
-</section>
-
-<section class="card" id="rules">
-  <h2>Правило большого пальца</h2>
-  <div class="rules" style="margin-top:12px">
-    <div class="rule">
-      <h3><span class="dot crg"></span>СРГ, когда</h3>
-      <ul>
-        <li>связка новая или оффер, гео, креатив меняются, конверсии ещё нет</li>
-        <li>идёт тест на небольшом объёме, где решает везение</li>
-        <li>надо гарантированно вернуть расход на трафик</li>
-        <li>реальная конверсия ожидается ниже гаранта или около него</li>
+  <section class="sect rv" aria-label="Три формата оплаты">
+    <div class="card">
+      <ul class="formats">
+        <li class="fmt cpa">
+          <div class="fmt-glyph" aria-hidden="true">
+            <svg viewBox="0 0 30 24"><path d="M2 21L28 3" fill="none" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <h3>CPA</h3>
+            <p>Платят за каждый FTD, то есть первый депозит. Нет депозитов, нет денег.</p>
+            <span class="formula">лиды × конверсия × ставка</span>
+          </div>
+        </li>
+        <li class="fmt cpl">
+          <div class="fmt-glyph" aria-hidden="true">
+            <svg viewBox="0 0 30 24"><path d="M2 12H28" fill="none" stroke="var(--c)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/></svg>
+          </div>
+          <div>
+            <h3>CPL</h3>
+            <p>Платят за каждый лид, конверсия не важна. Ставка 1 500&nbsp;$ и гарант 10% дают 150&nbsp;$ за лид.</p>
+            <span class="formula">лиды × ставка × гарант %</span>
+          </div>
+        </li>
+        <li class="fmt crg">
+          <div class="fmt-glyph" aria-hidden="true">
+            <svg viewBox="0 0 30 24"><path d="M2 18H12L28 4" fill="none" stroke="var(--c)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <h3>CRG</h3>
+            <p>Рекл гарантирует минимальную конверсию. Ниже гаранта доплачивает до него, выше платит за каждый FTD.</p>
+            <span class="formula">лиды × max(конв., гарант) × ставка</span>
+          </div>
+        </li>
       </ul>
     </div>
-    <div class="rule">
-      <h3><span class="dot cpa"></span>СПА, когда</h3>
-      <ul>
-        <li>связка проверена и конверсия стабильно выше гаранта</li>
-        <li>объём большой, везение усредняется</li>
-        <li>есть запас по бюджету, и можно пережить плохую неделю</li>
-        <li>хочешь забирать весь апсайд, а не потолок по гаранту</li>
-      </ul>
+  </section>
+
+  <section class="sect" id="calc" aria-labelledby="calc-h">
+    <h2 id="calc-h" class="rv">Калькулятор</h2>
+
+    <p class="cap rv">Условия</p>
+    <div class="card rv" id="inputs">
+      <div id="rows-main"></div>
+      <button class="adv-btn" id="adv-btn" type="button" aria-expanded="false" aria-controls="adv-panel">
+        <span>Дополнительно</span>
+        <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="adv-panel" id="adv-panel" inert>
+        <div class="adv-in"><div id="rows-adv"></div></div>
+      </div>
     </div>
-  </div>
-  <p class="chatnote">Формула границы: <b>конверсия = гарант %</b>. Ниже неё выигрывает СРГ, выше неё СПА. Гарант 10% и реальные 13% дают СПА +30% к выплате, но в любой конкретной пачке лидов СРГ всё равно может оказаться впереди.</p>
-</section>
 
-<section class="card" id="ask">
-  <h2>Спроси у рекла до старта</h2>
-  <p class="sub">Слова «1500+10» ничего не говорят о деталях. От них зависит, выгодна ли сделка.</p>
-  <ol class="check">
-    <li><span class="n">1</span><div>Это фикс или пол?<small>Платят только гарант или СПА за факт, но не ниже гаранта. От этого зависит весь расчёт.</small></div></li>
-    <li><span class="n">2</span><div>Ставка в СРГ такая же, как в СПА?<small>Часто в схеме с гарантом ставку режут. Подставь урезанную в калькулятор.</small></div></li>
-    <li><span class="n">3</span><div>На какой объём и срок считается гарант?<small>Минимум лидов, период, когда сверяют конверсию, и когда доплачивают.</small></div></li>
-    <li><span class="n">4</span><div>Какой лид считается валидным?<small>Что рекл вправе отсеять: дубли, не те гео, нет дозвона. От этого зависит, сколько лидов попадёт в расчёт.</small></div></li>
-    <li><span class="n">5</span><div>Холд и сроки выплат<small>Гарант на бумаге и деньги на счёте не одно и то же. Уточни, через сколько дней приходит выплата.</small></div></li>
-  </ol>
-</section>
+    <p class="cap rv">Доход</p>
+    <div class="card rv" id="results">
+      <div class="res">
+        <div class="tile cpa" id="t-cpa">
+          <div class="th"><i class="dot"></i><span class="tn">CPA</span><span class="badge">Лучший</span></div>
+          <div class="tv" id="v-cpa">0&nbsp;$</div>
+          <div class="tc" id="c-cpa"></div>
+          <div class="tp" id="p-cpa" hidden></div>
+        </div>
+        <div class="tile cpl" id="t-cpl">
+          <div class="th"><i class="dot"></i><span class="tn">CPL</span><span class="badge">Лучший</span></div>
+          <div class="tv" id="v-cpl">0&nbsp;$</div>
+          <div class="tc" id="c-cpl"></div>
+          <div class="tp" id="p-cpl" hidden></div>
+        </div>
+        <div class="tile crg" id="t-crg">
+          <div class="th"><i class="dot"></i><span class="tn">CRG</span><span class="badge">Лучший</span></div>
+          <div class="tv" id="v-crg">0&nbsp;$</div>
+          <div class="tc" id="c-crg"></div>
+          <div class="tp" id="p-crg" hidden></div>
+        </div>
+      </div>
+      <p class="say sep-top" id="say" aria-live="polite"></p>
+      <p class="edge" id="edge"></p>
+    </div>
 
-<footer>Цифры нужны, чтобы понять логику схем. Условия у каждого рекла свои, результат не гарантирован.</footer>
+    <p class="cap rv">Доход от конверсии</p>
+    <div class="card chart-card rv">
+      <div class="chart" id="chart"></div>
+      <div class="legend" aria-hidden="true">
+        <span><svg viewBox="0 0 26 10"><path d="M1 5H25" stroke="var(--cpa)" stroke-width="2.5" stroke-linecap="round"/></svg>CPA</span>
+        <span><svg viewBox="0 0 26 10"><path d="M1 5H25" stroke="var(--cpl)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="5 4"/></svg>CPL</span>
+        <span><svg viewBox="0 0 26 10"><path d="M1 5H25" stroke="var(--crg)" stroke-width="5" stroke-linecap="round"/></svg>CRG</span>
+      </div>
+      <p class="hint">Потяни маркер по графику, чтобы поменять конверсию.</p>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="when-h">
+    <h2 id="when-h" class="rv">Когда что брать</h2>
+    <div class="when-grid">
+      <div class="when cpa rv">
+        <h3>CPA</h3>
+        <ul>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Связка проверена</li>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Конверсия выше гаранта</li>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Большой объём</li>
+        </ul>
+      </div>
+      <div class="when cpl rv">
+        <h3>CPL</h3>
+        <ul>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Новая связка или тест</li>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Конверсия ожидается низкой</li>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Нужно покрыть расход</li>
+        </ul>
+      </div>
+      <div class="when crg rv">
+        <h3>CRG</h3>
+        <ul>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Нужна страховка снизу и верх по депозитам</li>
+          <li><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M12 5.5l-6 7M6 5.5l6 7" fill="none" stroke="var(--label-2)" stroke-width="2" stroke-linecap="round"/></svg>Цена: часто урезанная ставка и условия</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="rv">
+    <p>Цифры нужны, чтобы понять логику. Условия у каждого рекла свои.</p>
+    <p class="swiss">
+      <svg viewBox="0 0 32 32" width="13" height="13" role="img" aria-label="Флаг Швейцарии"><rect width="32" height="32" rx="3" fill="#DA291C"/><path d="M13 6h6v7h7v6h-7v7h-6v-7H6v-6h7z" fill="#fff"/></svg>
+      <span>Swiss made</span>
+    </p>
+  </footer>
 </main>
+
+<div class="pill glass" id="pill" aria-hidden="true" inert>
+  <div class="pi cpa" id="pi-cpa"><span class="pl"><i class="dot"></i>CPA</span><span class="pv" id="pv-cpa"></span></div>
+  <div class="pi cpl" id="pi-cpl"><span class="pl"><i class="dot"></i>CPL</span><span class="pv" id="pv-cpl"></span></div>
+  <div class="pi crg" id="pi-crg"><span class="pl"><i class="dot"></i>CRG</span><span class="pv" id="pv-crg"></span></div>
+</div>
 
 <script>
 (function(){
 'use strict';
-var $=function(s){return document.querySelector(s)};
-var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+var root=document.documentElement;
+root.classList.add('js');
+var RM=window.matchMedia('(prefers-reduced-motion: reduce)');
+var NB=' ';
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+
+/* ---------- форматирование ---------- */
 var nf0=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0});
 var nf1=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1});
 var nf2=new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2});
-var NB=' ';
-function money(v){var neg=v<-0.5;return (neg?'−':'')+nf0.format(Math.round(Math.abs(v)))+NB+'$'}
-function short(v){return v>=1000?nf1.format(v/1000)+'k':nf0.format(v)}
-function pct(x){var v=x*100;if(v>0&&v<1)return '<1%';if(v>99&&v<100)return '>99%';return nf0.format(Math.round(v))+'%'}
+function money(v){return (v<-0.5?'−':'')+nf0.format(Math.round(Math.abs(v)))+NB+'$'}
+function money2(v){return nf2.format(v)+NB+'$'}
+function pc(v){return nf2.format(v)+'%'}
+function num(v){return nf2.format(v)}
+function inText(v){return String(+v.toFixed(2)).replace('.',',')}
 
-var st={rate:1500,g:10,n:50,p:3,spend:0,mode:'fix'};
-var fields={
-  rate:{min:100,max:5000,step:50,hard:[1,1e6]},
-  g:{min:1,max:30,step:1,hard:[0,100]},
-  n:{min:5,max:300,step:5,hard:[1,2000]},
-  p:{min:0,max:40,step:0.5,hard:[0,100]}
+/* ---------- пружина: интерруптируемая, стартует с текущего значения ---------- */
+function Spring(x,eps,resp,zeta){
+  this.x=x;this.t=x;this.v=0;this.eps=eps||.001;
+  var r=resp||.35;this.k=Math.pow(2*Math.PI/r,2);this.c=2*(zeta==null?1:zeta)*Math.sqrt(this.k);
+}
+Spring.prototype.to=function(t,instant){this.t=t;if(instant||RM.matches){this.x=t;this.v=0}};
+Spring.prototype.done=function(){return Math.abs(this.x-this.t)<this.eps&&Math.abs(this.v)<this.eps*8};
+Spring.prototype.step=function(dt){
+  var n=Math.max(1,Math.ceil(dt*120)),h=dt/n,i,a;
+  for(i=0;i<n;i++){a=-this.k*(this.x-this.t)-this.c*this.v;this.v+=a*h;this.x+=this.v*h}
 };
+var springs=[];
+function sp(x,eps,resp,zeta){var s=new Spring(x,eps,resp,zeta);springs.push(s);return s}
+
+var raf=0,last=0;
+function kick(){if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
+function tick(now){
+  var dt=Math.min(.05,Math.max(.001,(now-last)/1000));last=now;
+  var busy=false;
+  springs.forEach(function(s){
+    if(s.done()){s.x=s.t;s.v=0;return}
+    s.step(dt);
+    if(s.done()){s.x=s.t;s.v=0}else busy=true;
+  });
+  render();
+  raf=0;
+  if(busy){raf=requestAnimationFrame(tick)}
+}
 
 /* ---------- модель ---------- */
-function model(){
-  var n=Math.round(st.n),rate=st.rate,gu=n*st.g/100,q=clamp(st.p/100,0,1);
-  var fix=st.mode==='fix';
-  function crgInc(k){return fix?gu*rate:Math.max(k,gu)*rate}
-  function cpaInc(k){return k*rate}
-  var kExp=n*q;
-  var lf=[0];for(var i=1;i<=n;i++)lf[i]=lf[i-1]+Math.log(i);
-  var pm=new Array(n+1);
-  for(var k=0;k<=n;k++){
-    if(q<=0)pm[k]=k===0?1:0;
-    else if(q>=1)pm[k]=k===n?1:0;
-    else pm[k]=Math.exp(lf[n]-lf[k]-lf[n-k]+k*Math.log(q)+(n-k)*Math.log(1-q));
-  }
-  var pCrg=0,pTie=0,pCpa=0,eCpa=0,eCrg=0,cdf=0,k5=null;
-  for(var j=0;j<=n;j++){
-    var a=cpaInc(j),b=crgInc(j),d=a-b;
-    if(Math.abs(d)<1e-6)pTie+=pm[j];else if(d>0)pCpa+=pm[j];else pCrg+=pm[j];
-    eCpa+=pm[j]*a;eCrg+=pm[j]*b;cdf+=pm[j];
-    if(k5===null&&cdf>=0.05)k5=j;
-  }
-  return {n:n,rate:rate,gu:gu,q:q,fix:fix,kExp:kExp,crgInc:crgInc,cpaInc:cpaInc,pm:pm,
-    pCrg:pCrg,pTie:pTie,pCpa:pCpa,eCpa:eCpa,eCrg:eCrg,k5:k5===null?0:k5};
-}
-
-/* ---------- блок результатов ---------- */
-function renderResults(m){
-  var cpa=m.cpaInc(m.kExp),crg=m.crgInc(m.kExp),diff=crg-cpa,spendTot=st.spend*m.n;
-  $('#cpa-inc').textContent=money(cpa);
-  $('#cpa-how').textContent=nf2.format(m.kExp)+' FTD × '+money(m.rate);
-  $('#crg-inc').textContent=money(crg);
-  if(m.fix)$('#crg-how').textContent=m.n+' лидов × '+money(m.rate*st.g/100)+' за лид';
-  else $('#crg-how').textContent='как за '+nf2.format(Math.max(m.kExp,m.gu))+' FTD × '+money(m.rate);
-  [['cpa',cpa],['crg',crg]].forEach(function(x){
-    var el=$('#'+x[0]+'-profit');
-    if(st.spend>0){var pr=x[1]-spendTot;el.textContent='Профит после трафика: '+money(pr);el.style.color=pr<0?'var(--bad)':'var(--good)'}
-    else{el.textContent='';}
-  });
-  var win=Math.abs(diff)<0.5?'tie':(diff>0?'crg':'cpa');
-  $('#res-cpa').className='res'+(win==='cpa'?' win cpa':'');
-  $('#res-crg').className='res'+(win==='crg'?' win crg':'');
-  $('#verdict').className='verdict '+(win==='tie'?'':win);
-  var t,x;
-  if(win==='tie'){
-    t='Поровну';
-    x=m.fix?'Конверсия ровно на уровне гаранта: обе схемы дают одно и то же.':'Выше пола схемы совпадают: СРГ ничего не добавляет и не отнимает.';
-  }else if(win==='crg'){
-    t='СРГ выгоднее на '+money(diff);
-    x=m.fix?'Конверсия ниже гаранта, и рекл доплачивает за недостающие депозиты.':'Конверсия ниже пола, и рекл доплачивает до гаранта.';
-  }else{
-    t='СПА выгоднее на '+money(-diff);
-    x='Конверсия выше гаранта, а в фиксированном СРГ потолок равен гаранту, так что всё, что выше, ты теряешь.';
-  }
-  $('#v-title').textContent=t;$('#v-text').textContent=x;
-  $('#be').innerHTML=m.fix
-    ?'Граница: <b>'+nf1.format(st.g)+'%</b> конверсии. Ниже неё выигрывает СРГ, выше неё СПА.'
-    :'В схеме с полом СРГ никогда не хуже СПА по тем же цифрам. Проверь, не режут ли ставку взамен.';
-  $('#modehint').textContent=m.fix
-    ?'Фикс: платят строго по гаранту, как в примере из чата. Выше гаранта ничего не добавят.'
-    :'Пол: платят СПА за реальные депозиты, но не меньше, чем по гаранту. Это самая выгодная для баера схема, но и самая редкая.';
-}
-
-/* ---------- график 1: доход от конверсии ---------- */
-function drawLine(m){
-  var el=$('#chart1');var W=el.clientWidth||320;var H=Math.round(clamp(W*0.55,220,300));
-  var mg={l:44,r:12,t:14,b:28},iw=W-mg.l-mg.r,ih=H-mg.t-mg.b;
-  var xmax=Math.max(40,Math.ceil(Math.max(st.g,st.p)*1.25/10)*10);
-  var ymax=m.rate*m.n*xmax/100;
-  var X=function(v){return mg.l+v/xmax*iw},Y=function(v){return mg.t+ih-v/ymax*ih};
-  var g=st.g,c=m.gu*m.rate;
-  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="График дохода СПА и СРГ в зависимости от конверсии">';
-  // зоны
-  s+='<rect x="'+X(0)+'" y="'+mg.t+'" width="'+(X(Math.min(g,xmax))-X(0))+'" height="'+ih+'" style="fill:var(--crg-soft)"/>';
-  if(m.fix)s+='<rect x="'+X(g)+'" y="'+mg.t+'" width="'+(X(xmax)-X(g))+'" height="'+ih+'" style="fill:var(--cpa-soft)"/>';
-  // сетка
-  [0,.5,1].forEach(function(f){
-    var yy=Y(ymax*f);
-    s+='<line x1="'+mg.l+'" x2="'+(W-mg.r)+'" y1="'+yy+'" y2="'+yy+'" style="stroke:var(--grid)" stroke-width="1"/>';
-    s+='<text x="'+(mg.l-8)+'" y="'+(yy+4)+'" text-anchor="end">'+short(ymax*f)+'</text>';
-  });
-  for(var xv=0;xv<=xmax;xv+=10){
-    s+='<text x="'+X(xv)+'" y="'+(H-8)+'" text-anchor="middle">'+xv+'%</text>';
-  }
-  // подписи зон
-  var wl=X(g)-X(0),wr=X(xmax)-X(g);
-  if(wl>90)s+='<text x="'+(X(0)+wl/2)+'" y="'+(mg.t+14)+'" text-anchor="middle" style="fill:var(--crg);font-weight:700">СРГ выгоднее</text>';
-  if(m.fix&&wr>90)s+='<text x="'+(X(g)+wr/2)+'" y="'+(mg.t+14)+'" text-anchor="middle" style="fill:var(--cpa-ink);font-weight:700">СПА выгоднее</text>';
-  // линии
-  var crgPath=m.fix?('M'+X(0)+','+Y(c)+' L'+X(xmax)+','+Y(c)):('M'+X(0)+','+Y(c)+' L'+X(g)+','+Y(c)+' L'+X(xmax)+','+Y(ymax));
-  s+='<path d="'+crgPath+'" fill="none" style="stroke:var(--crg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>';
-  s+='<path d="M'+X(0)+','+Y(0)+' L'+X(xmax)+','+Y(ymax)+'" fill="none" style="stroke:var(--cpa)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="'+(m.fix?'0':'1 7')+'"/>';
-  // граница
-  if(m.fix){
-    s+='<circle cx="'+X(g)+'" cy="'+Y(c)+'" r="9" style="fill:var(--text);opacity:.14"/><circle cx="'+X(g)+'" cy="'+Y(c)+'" r="4" style="fill:var(--text)"/>';
-  }
-  // текущая точка
-  var px=clamp(st.p,0,xmax);
-  s+='<line x1="'+X(px)+'" x2="'+X(px)+'" y1="'+mg.t+'" y2="'+(mg.t+ih)+'" style="stroke:var(--text);opacity:.35" stroke-width="1.5" stroke-dasharray="3 4"/>';
-  var cpaY=Y(clamp(m.cpaInc(m.kExp),0,ymax)),crgY=Y(clamp(m.crgInc(m.kExp),0,ymax));
-  s+='<circle cx="'+X(px)+'" cy="'+cpaY+'" r="11" style="fill:var(--cpa);opacity:.2"/><circle cx="'+X(px)+'" cy="'+cpaY+'" r="6" style="fill:var(--cpa)"/>';
-  s+='<circle cx="'+X(px)+'" cy="'+crgY+'" r="11" style="fill:var(--crg);opacity:.2"/><circle cx="'+X(px)+'" cy="'+crgY+'" r="6" style="fill:var(--crg)"/>';
-  s+='</svg>';
-  el.innerHTML=s;
-  el._geom={mg:mg,iw:iw,xmax:xmax};
-}
-(function(){
-  var el=$('#chart1'),drag=false;
-  function setFrom(e){
-    var gm=el._geom;if(!gm)return;
-    var r=el.getBoundingClientRect();
-    var v=(e.clientX-r.left-gm.mg.l)/gm.iw*gm.xmax;
-    st.p=clamp(Math.round(v*2)/2,0,Math.max(40,gm.xmax));
-    render();
-  }
-  el.addEventListener('pointerdown',function(e){drag=true;try{el.setPointerCapture(e.pointerId)}catch(_){}setFrom(e)});
-  el.addEventListener('pointermove',function(e){if(drag)setFrom(e)});
-  el.addEventListener('pointerup',function(){drag=false});
-  el.addEventListener('pointercancel',function(){drag=false});
-})();
-
-/* ---------- график 2: распределение депозитов ---------- */
-function drawDist(m){
-  var el=$('#chart2');var W=el.clientWidth||320;var H=Math.round(clamp(W*0.5,200,260));
-  var mg={l:8,r:8,t:22,b:28},iw=W-mg.l-mg.r,ih=H-mg.t-mg.b;
-  var n=m.n,mean=n*m.q,sd=Math.sqrt(n*m.q*(1-m.q));
-  var lo=Math.max(0,Math.floor(mean-4*sd)),hi=Math.min(n,Math.ceil(mean+4*sd));
-  lo=Math.min(lo,Math.floor(m.gu));hi=Math.max(hi,Math.ceil(m.gu));
-  hi=Math.min(n,hi);
-  while(hi-lo<8&&(hi<n||lo>0)){if(hi<n)hi++;if(hi-lo<8&&lo>0)lo--}
-  var cnt=hi-lo+1,bw=iw/cnt,gap=bw>7?2:(bw>3.5?1:0);
-  var maxp=0;for(var k=lo;k<=hi;k++)maxp=Math.max(maxp,m.pm[k]);
-  if(maxp<=0)maxp=1;
-  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Распределение числа депозитов">';
-  s+='<line x1="'+mg.l+'" x2="'+(W-mg.r)+'" y1="'+(mg.t+ih)+'" y2="'+(mg.t+ih)+'" style="stroke:var(--grid)" stroke-width="1"/>';
-  var bars=[];
-  for(var i=lo;i<=hi;i++){
-    var d=m.cpaInc(i)-m.crgInc(i);
-    var col=Math.abs(d)<1e-6?'var(--tie)':(d>0?'var(--cpa)':'var(--crg)');
-    var h=m.pm[i]/maxp*ih*0.95;var x=mg.l+(i-lo)*bw+gap/2;
-    s+='<rect class="bar" data-k="'+i+'" x="'+x+'" y="'+(mg.t+ih-h)+'" width="'+Math.max(1,bw-gap)+'" height="'+Math.max(h,m.pm[i]>0?1:0)+'" rx="'+Math.min(3,(bw-gap)/2)+'" style="fill:'+col+'"/>';
-  }
-  var step=1;while(cnt/step>7)step=step<2?2:(step<5?5:step*2);
-  for(var t=lo;t<=hi;t++){if((t-lo)%step===0)s+='<text x="'+(mg.l+(t-lo+.5)*bw)+'" y="'+(H-8)+'" text-anchor="middle">'+t+'</text>';}
-  // маркер гаранта
-  var gx=mg.l+(m.gu-lo+.5)*bw;
-  s+='<line x1="'+gx+'" x2="'+gx+'" y1="'+(mg.t-4)+'" y2="'+(mg.t+ih)+'" style="stroke:var(--text);opacity:.45" stroke-width="1.5" stroke-dasharray="3 4"/>';
-  var anchor=gx>W-80?'end':(gx<80?'start':'middle');
-  s+='<text x="'+gx+'" y="'+(mg.t-8)+'" text-anchor="'+anchor+'" style="fill:var(--text);font-weight:700">гарант '+nf1.format(m.gu)+' FTD</text>';
-  s+='</svg>';
-  el.innerHTML=s;
-  el._dist={mg:mg,bw:bw,lo:lo,hi:hi};
-  showTip(m,Math.round(clamp(mean,lo,hi)),true);
-}
-function showTip(m,k,auto){
-  var a=m.cpaInc(k),b=m.crgInc(k),d=a-b;
-  var who=Math.abs(d)<1e-6?'поровну':(d>0?'СПА лучше на '+money(d):'СРГ лучше на '+money(-d));
-  $('#tip').innerHTML=(auto?'Самый частый исход: ':'')+'<b>'+k+' FTD из '+m.n+'</b> (шанс '+pct(m.pm[k])+'). СПА '+money(a)+', СРГ '+money(b)+', '+who+'.'+(auto?' Проведи по столбикам, чтобы посмотреть другие исходы.':'');
-}
-(function(){
-  var el=$('#chart2');
-  function at(e){
-    var g=el._dist;if(!g||!window._m)return;
-    var r=el.getBoundingClientRect();
-    var i=Math.floor((e.clientX-r.left-g.mg.l)/g.bw);
-    if(i<0||i>g.hi-g.lo)return;
-    showTip(window._m,g.lo+i,false);
-  }
-  el.addEventListener('pointerdown',at);
-  el.addEventListener('pointermove',function(e){if(e.pointerType==='mouse'||e.buttons)at(e)});
-})();
-
-/* ---------- вероятности ---------- */
-function renderProbs(m){
-  $('#p-crg').textContent=pct(m.pCrg);$('#p-tie').textContent=pct(m.pTie);$('#p-cpa').textContent=pct(m.pCpa);
-  $('#s-crg').style.width=m.pCrg*100+'%';$('#s-tie').style.width=m.pTie*100+'%';$('#s-cpa').style.width=m.pCpa*100+'%';
-  $('#e-cpa').textContent=money(m.eCpa);$('#e-crg').textContent=money(m.eCrg);
-  var wc=m.cpaInc(m.k5),wg=m.crgInc(m.k5);
-  $('#w-cpa').textContent='до '+money(wc);$('#w-crg').textContent='от '+money(wg);
-  var t;
-  if(m.fix&&m.pCpa+m.pTie>=0.999&&st.p>=st.g){
-    t='Конверсия сильно выше гаранта, и СПА почти наверняка окажется впереди. Страховка тебе не нужна.';
-  }else if(m.fix&&m.pCrg>=0.8){
-    t='СРГ выигрывает в '+pct(m.pCrg)+' случаев: при такой конверсии и таком объёме гарант почти всегда оказывается выше факта.';
-  }else if(m.fix&&st.p>st.g){
-    t='В среднем СПА богаче на '+money(m.eCpa-m.eCrg)+', но в '+pct(m.pCrg)+' пачек СРГ всё равно будет впереди. Это цена вилки: СПА зарабатывает больше, но менее предсказуем.';
-  }else if(m.fix&&st.p<st.g){
-    t='В среднем СРГ богаче на '+money(m.eCrg-m.eCpa)+', а СПА обгонит его лишь в '+pct(m.pCpa)+' случаев. Чем меньше лидов, тем сильнее решает везение.';
-  }else if(m.fix){
-    t='Конверсия на границе: в среднем схемы равны, а исход пачки решает везение. СРГ даёт предсказуемость, СПА даёт шанс на большее.';
-  }else{
-    t='С полом СРГ не проигрывает ни в одном исходе. Единственная цена: возможно, урезанная ставка или жёсткие условия. Проверь это у рекла.';
-  }
-  $('#insight').textContent=t;
-}
-
-/* ---------- викторина ---------- */
-var QUIZ=[
-  {q:'Что известно про конверсию связки?',o:[
-    {t:'Стабильно выше гаранта',v:-2,w:'Конверсия связки выше гаранта: на СРГ ты отдавал бы разницу'},
-    {t:'Около гаранта',v:0,w:'Конверсия рядом с гарантом: тут решают объём и нервы'},
-    {t:'Не знаю, связка новая',v:2,w:'Нет истории конверсии: гарант страхует от слива на тесте'}]},
-  {q:'Сколько лидов будет за период?',o:[
-    {t:'Мало, это тест',v:1,w:'На малом объёме сильно решает везение, и СРГ его сглаживает'},
-    {t:'Средне',v:0,w:'Средний объём: везение уже частично усредняется'},
-    {t:'Много',v:-1,w:'На большом объёме разброс усредняется, и СПА выходит ближе к средней'}]},
-  {q:'Как с расходом на трафик?',o:[
-    {t:'Надо гарантированно вернуть',v:1,w:'Нужен минимум, который покрывает расход: это работа гаранта'},
-    {t:'Не критично',v:0,w:'Расход не давит: обе схемы терпимы'},
-    {t:'Есть запас, готов рисковать',v:-1,w:'Запас есть, можно ловить апсайд СПА'}]}
+var P={rate:1500,g:10,n:50,conv:3,disc:0,cost:0};
+var F=[
+  {k:'rate',t:'Ставка CPA',h:'$ за один FTD',u:'$',min:50,max:5000,step:50,lo:0,hi:1e6,mode:'numeric',dp:0,adv:0},
+  {k:'g',t:'Гарант',h:'минимальная конверсия',u:'%',min:1,max:50,step:.5,lo:.5,hi:100,mode:'decimal',dp:2,adv:0},
+  {k:'n',t:'Лидов',h:'за период',u:'',min:5,max:500,step:5,lo:0,hi:1e6,mode:'numeric',dp:0,adv:0},
+  {k:'conv',t:'Реальная конверсия',h:'из лида в депозит',u:'%',min:0,max:60,step:.5,lo:0,hi:100,mode:'decimal',dp:2,adv:0},
+  {k:'disc',t:'Скидка к ставке в CRG',h:'ставку в CRG часто режут',u:'%',min:0,max:50,step:1,lo:0,hi:100,mode:'decimal',dp:2,adv:1},
+  {k:'cost',t:'Расход на один лид',h:'покажем профит после трафика',u:'$',min:0,max:300,step:1,lo:0,hi:1e5,mode:'decimal',dp:2,adv:1}
 ];
-var quiz=[1,1,1];
-function renderQuiz(){
-  var host=$('#quiz');host.innerHTML='';
-  QUIZ.forEach(function(q,qi){
-    var d=document.createElement('div');d.className='q';
-    var h=document.createElement('h3');h.textContent=(qi+1)+'. '+q.q;d.appendChild(h);
-    var o=document.createElement('div');o.className='opts';
-    q.o.forEach(function(op,oi){
-      var b=document.createElement('button');b.type='button';b.className='opt'+(quiz[qi]===oi?' on':'');b.textContent=op.t;
-      b.addEventListener('click',function(){quiz[qi]=oi;renderQuiz()});
-      o.appendChild(b);
-    });
-    d.appendChild(o);host.appendChild(d);
-  });
-  var score=0,why=[];
-  quiz.forEach(function(oi,qi){var op=QUIZ[qi].o[oi];score+=op.v;why.push(op.w)});
-  var a=$('#answer'),cls,title;
-  if(score>=2){cls='crg';title='Бери СРГ'}
-  else if(score<=-2){cls='cpa';title='Бери СПА'}
-  else{cls='';title='Сигналы смешанные'}
-  a.className='answer '+cls;
-  var extra=cls===''?'<li>Посчитай свой случай в калькуляторе выше и уточни условия рекла: фикс или пол, ставка, объём.</li>':'';
-  a.innerHTML='<h3>'+title+'</h3><ul>'+why.map(function(w){return '<li>'+w+'</li>'}).join('')+extra+'</ul>';
+var FK={};F.forEach(function(f){FK[f.k]=f});
+var K=['cpa','cpl','crg'];
+
+function calc(p){
+  var n=p.n,r=p.rate,c=p.conv/100,g=p.g/100,d=p.disc/100;
+  return {cpa:n*c*r, cpl:n*r*g, crg:n*Math.max(c,g)*r*(1-d)};
 }
 
-/* ---------- ввод ---------- */
-function syncControls(skip){
-  Object.keys(fields).forEach(function(k){
-    var f=fields[k],rg=$('#rg-'+k),inp=$('#in-'+k);
-    rg.min=f.min;rg.max=f.max;rg.step=f.step;
-    rg.value=st[k];
-    rg.style.setProperty('--pct',(clamp(st[k],f.min,f.max)-f.min)/(f.max-f.min)*100+'%');
-    if(document.activeElement!==inp)inp.value=st[k];
-  });
-  if(document.activeElement!==$('#in-spend'))$('#in-spend').value=st.spend;
-  document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',parseFloat(c.dataset.p)===st.p)});
-  document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===st.mode)});
+/* ---------- построение полей ---------- */
+function rowHTML(f){
+  return '<div class="row" data-k="'+f.k+'">'+
+    '<div class="rh"><label for="n-'+f.k+'"><span class="t">'+f.t+'</span><span class="h">'+f.h+'</span></label>'+
+    '<div class="num"><input id="n-'+f.k+'" type="text" inputmode="'+f.mode+'" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false">'+
+    '<span class="u" aria-hidden="true">'+f.u+'</span></div></div>'+
+    '<input class="rng" id="r-'+f.k+'" type="range" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" aria-label="'+f.t+'">'+
+    (f.k==='conv'?'<div class="seg" id="seg" role="group" aria-label="Быстрые значения конверсии"><i class="thumb" id="seg-thumb"></i>'+
+      ['слабая','на гаранте','сильная'].map(function(l,i){return '<button type="button" data-i="'+i+'" aria-pressed="false"><b></b><span>'+l+'</span></button>'}).join('')+'</div>':'')+
+    '</div>';
 }
-Object.keys(fields).forEach(function(k){
-  var f=fields[k],rg=$('#rg-'+k),inp=$('#in-'+k);
-  rg.addEventListener('input',function(){st[k]=parseFloat(rg.value);if(k==='n')st[k]=Math.round(st[k]);render()});
-  inp.addEventListener('input',function(){
-    var v=parseFloat(String(inp.value).replace(',','.'));if(!isFinite(v))return;
-    v=clamp(v,f.hard[0],f.hard[1]);if(k==='n')v=Math.max(1,Math.round(v));
-    st[k]=v;render();
-  });
-  inp.addEventListener('blur',function(){inp.value=st[k]});
-});
-$('#in-spend').addEventListener('input',function(){
-  var v=parseFloat(String($('#in-spend').value).replace(',','.'));
-  st.spend=isFinite(v)?clamp(v,0,1e5):0;render();
-});
-$('#in-spend').addEventListener('blur',function(){$('#in-spend').value=st.spend});
-document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){st.p=parseFloat(c.dataset.p);render()})});
-document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){st.mode=b.dataset.mode;render()})});
+$('#rows-main').innerHTML=F.filter(function(f){return !f.adv}).map(rowHTML).join('');
+$('#rows-adv').innerHTML=F.filter(function(f){return f.adv}).map(rowHTML).join('');
 
+var NI={},RG={};
+F.forEach(function(f){NI[f.k]=$('#n-'+f.k);RG[f.k]=$('#r-'+f.k)});
+
+/* ---------- пружины ---------- */
+var sInc={cpa:sp(0,.05,.38),cpl:sp(0,.05,.38),crg:sp(0,.05,.38)};
+var sC={
+  rate:sp(P.rate,.05,.34),g:sp(P.g,.002,.34),n:sp(P.n,.01,.34),disc:sp(P.disc,.002,.34),
+  conv:sp(P.conv,.002,.2),xmax:sp(20,.01,.4),ymax:sp(1,.5,.4)
+};
+var sThumb=sp(0,.002,.38,.88);
+
+var meta={stepY:1,cntY:4,stepX:5,xmaxT:20};
+var chartDrag=false,lockX=null;
+
+/* ---------- установка значений ---------- */
+function normalize(k,v){
+  var f=FK[k];v=clamp(v,f.lo,f.hi);
+  return f.dp?Math.round(v*100)/100:Math.round(v);
+}
+function setPct(k){
+  var f=FK[k],r=RG[k];r.style.setProperty('--p',clamp((P[k]-f.min)/(f.max-f.min),0,1));
+}
+function setP(k,v,src){
+  v=normalize(k,v);
+  if(v===P[k]&&src!=='init')return;
+  P[k]=v;
+  RG[k].value=v;setPct(k);
+  if(src!=='input')NI[k].value=inText(v);
+  update(src);
+}
+
+function niceStep(x){
+  var e=Math.pow(10,Math.floor(Math.log10(x))),m=x/e,s=m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10;
+  return s*e;
+}
+function xmaxTarget(){
+  var base=Math.max(20,Math.ceil(P.g*2/5)*5);
+  if(chartDrag&&lockX!=null)return lockX;
+  return Math.min(100,Math.max(base,Math.ceil(P.conv*1.1/5)*5));
+}
+function qvals(){
+  var r=function(x){return clamp(Math.round(x*2)/2,0,100)};
+  return [r(P.g*.3),r(P.g),r(P.g*1.3)];
+}
+
+function update(src){
+  var inc=calc(P),i;
+  K.forEach(function(k){sInc[k].to(inc[k]);$('#v-'+k).dataset.v=String(Math.round(inc[k]*100)/100)});
+
+  /* график */
+  var xm=xmaxTarget();meta.xmaxT=xm;
+  meta.stepX=xm<=20?5:xm<=40?10:xm<=80?20:25;
+  var top=Math.max(P.n*P.rate*xm/100,inc.cpl,P.n*P.rate*xm/100*(1-P.disc/100))*1.06;
+  var sy=niceStep(Math.max(top,4)/4);
+  meta.stepY=sy;meta.cntY=Math.min(6,Math.max(1,Math.ceil(top/sy-1e-9)));
+  var inst=(src==='slider'||src==='chart');
+  sC.rate.to(P.rate);sC.g.to(P.g);sC.n.to(P.n);sC.disc.to(P.disc);
+  sC.conv.to(P.conv,inst);
+  sC.xmax.to(xm);sC.ymax.to(sy*meta.cntY);
+
+  /* быстрые значения: считаются от гаранта */
+  var q=qvals(),match=-1;
+  $$('#seg button').forEach(function(b,j){
+    $('b',b).textContent=pc(q[j]);
+    var on=Math.abs(q[j]-P.conv)<1e-9;b.setAttribute('aria-pressed',on?'true':'false');
+    if(on)match=j;
+  });
+  if(match>=0){sThumb.to(match);$('#seg-thumb').style.opacity=1}
+  else $('#seg-thumb').style.opacity=0;
+
+  /* строки расчёта */
+  var rateCrg=P.rate*(1-P.disc/100);
+  $('#c-cpa').textContent=num(P.n)+' × '+pc(P.conv)+' × '+money2(P.rate);
+  $('#c-cpl').textContent=num(P.n)+' × '+money2(P.rate*P.g/100)+' за лид';
+  $('#c-crg').textContent=num(P.n)+' × '+pc(Math.max(P.conv,P.g))+' × '+money2(rateCrg);
+
+  /* лучший (при равенстве помечаем всех равных) */
+  var mx=Math.max(inc.cpa,inc.cpl,inc.crg);
+  var win=K.filter(function(k){return mx-inc[k]<=0.005});
+  K.forEach(function(k){
+    var b=win.indexOf(k)>=0;
+    $('#t-'+k).classList.toggle('best',b);$('#pi-'+k).classList.toggle('best',b);
+  });
+  $('#say').textContent=verdict(inc,win);
+  $('#edge').innerHTML='Граница CPA и CPL: конверсия = гарант ('+pc(P.g)+').';
+
+  var chartEl=$('#chart svg');
+  if(chartEl){
+    chartEl.setAttribute('aria-valuenow',P.conv);chartEl.setAttribute('aria-valuetext','Конверсия '+pc(P.conv));
+    $('#bub-t').textContent=pc(P.conv);
+  }
+  kick();
+}
+
+function verdict(inc,win){
+  var c=pc(P.conv),g=pc(P.g),mx=Math.max(inc.cpa,inc.cpl,inc.crg);
+  if(mx<=0)return 'При таких условиях доход нулевой.';
+  if(win.length===3)return 'Конверсия ровно на гарант ('+g+'): все три формата платят одинаково.';
+  var rest=Math.max.apply(null,K.filter(function(k){return win.indexOf(k)<0}).map(function(k){return inc[k]}));
+  var gap=money(mx-rest),key=win.join('+');
+  switch(key){
+    case 'cpa':return 'CPA впереди на '+gap+': конверсия '+c+' выше гаранта '+g+', а в CRG ставка урезана.';
+    case 'cpl':return 'CPL впереди на '+gap+': конверсия '+c+' ниже гаранта '+g+', а в CRG ставка урезана.';
+    case 'crg':return 'CRG впереди на '+gap+'.';
+    case 'cpl+crg':return 'Конверсия '+c+' ниже гаранта '+g+': CPL и CRG платят поровну, CPA отстаёт на '+gap+'. CRG сохраняет верх, если конверсия вырастет.';
+    case 'cpa+crg':return 'Конверсия '+c+' выше гаранта '+g+': CPA и CRG платят поровну. Страховка снизу пока не нужна, но защитит, если конверсия упадёт.';
+    case 'cpa+cpl':return 'На гаранте CPA и CPL равны, а CRG уступает из-за урезанной ставки.';
+  }
+  return '';
+}
+
+/* ---------- привязка полей ---------- */
+F.forEach(function(f){
+  var k=f.k;
+  RG[k].addEventListener('input',function(){setP(k,parseFloat(RG[k].value),'slider')});
+  NI[k].addEventListener('input',function(){
+    var s=NI[k].value.replace(/[\s ]/g,'').replace(',','.');
+    if(s===''||!/^\d*\.?\d*$/.test(s)||s==='.')return;
+    setP(k,parseFloat(s),'input');
+  });
+  NI[k].addEventListener('blur',function(){NI[k].value=inText(P[k])});
+  NI[k].addEventListener('keydown',function(e){if(e.key==='Enter')NI[k].blur()});
+  NI[k].addEventListener('focus',function(){var el=NI[k];setTimeout(function(){try{el.select()}catch(e){}},0)});
+});
+$$('#seg button').forEach(function(b){
+  b.addEventListener('click',function(){setP('conv',qvals()[+b.dataset.i],'chip')});
+});
+
+/* дополнительно */
+var advBtn=$('#adv-btn'),advPanel=$('#adv-panel');
+advBtn.addEventListener('click',function(){
+  var open=advBtn.getAttribute('aria-expanded')!=='true';
+  advBtn.setAttribute('aria-expanded',open);
+  advPanel.classList.toggle('open',open);
+  if(open)advPanel.removeAttribute('inert');else advPanel.setAttribute('inert','');
+});
+
+/* ---------- график ---------- */
+var NS='http://www.w3.org/2000/svg';
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var host=$('#chart');
+var C={W:340,H:220,pl:42,pr:14,pt:36,pb:28};
+var svg=el('svg',{role:'slider',tabindex:'0','aria-label':'Конверсия, перетащи по графику','aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':P.conv});
+host.appendChild(svg);
+var defs=el('defs',{},svg),clipR=el('rect',{},el('clipPath',{id:'plotclip'},defs));
+var gGrid=el('g',{},svg),gX=el('g',{},svg);
+var yT=[],xT=[],i0;
+for(i0=0;i0<6;i0++){yT.push({l:el('line',{'class':'gl'},gGrid),t:el('text',{'text-anchor':'end'},gGrid)})}
+for(i0=0;i0<8;i0++){xT.push(el('text',{'text-anchor':'middle'},gX))}
+var gPlot=el('g',{'clip-path':'url(#plotclip)'},svg);
+var gLine=el('line',{stroke:'var(--label-2)','stroke-width':1,'stroke-dasharray':'2 3','stroke-opacity':.7},gPlot);
+var gLbl=el('text',{'text-anchor':'middle'},svg);gLbl.textContent='гарант';
+var pCRG=el('path',{fill:'none',stroke:'var(--crg)','stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},gPlot);
+var pCPA=el('path',{fill:'none',stroke:'var(--cpa)','stroke-width':2.25,'stroke-linecap':'round'},gPlot);
+var pCPL=el('path',{fill:'none',stroke:'var(--cpl)','stroke-width':2.25,'stroke-linecap':'round','stroke-dasharray':'6 5'},gPlot);
+var mLine=el('line',{stroke:'var(--label)','stroke-opacity':.28,'stroke-width':1.5},svg);
+var dCRG=el('circle',{r:7.5,fill:'var(--crg)'},svg);
+var dCPA=el('circle',{r:4.5,fill:'var(--cpa)'},svg);
+var dCPL=el('circle',{r:4.5,fill:'var(--cpl)'},svg);
+var bub=el('g',{},svg);
+var bubR=el('rect',{height:24,rx:12,fill:'var(--label)'},bub);
+var bubT=el('text',{id:'bub-t','text-anchor':'middle',fill:'var(--surface)','font-weight':600,'font-size':13,y:16.5,style:'fill:var(--surface);font-size:13px'},bub);
+
+function X(v){return C.pl+v/sC.xmax.x*(C.W-C.pl-C.pr)}
+function Y(v){return C.pt+(1-v/sC.ymax.x)*(C.H-C.pt-C.pb)}
+function f1(n){return Math.round(n*10)/10}
+function yLabel(v){return v>=1000?nf1.format(v/1000)+'к':nf0.format(v)}
+
+function renderChart(){
+  var rate=sC.rate.x,g=sC.g.x,n=sC.n.x,d=sC.disc.x/100,cv=clamp(sC.conv.x,0,sC.xmax.x),xm=sC.xmax.x;
+  var cpa=function(c){return n*c/100*rate},cplv=n*g/100*rate;
+  var crg=function(c){return n*Math.max(c,g)/100*rate*(1-d)};
+  var i,y0=Y(0),xr=C.W-C.pr;
+  for(i=0;i<6;i++){
+    var on=i<meta.cntY,v=(i+1)*meta.stepY,y=Y(v),t=yT[i];
+    t.l.style.display=t.t.style.display=on?'':'none';
+    if(on){
+      t.l.setAttribute('x1',C.pl);t.l.setAttribute('x2',xr);t.l.setAttribute('y1',f1(y));t.l.setAttribute('y2',f1(y));
+      t.t.setAttribute('x',C.pl-8);t.t.setAttribute('y',f1(y+4));t.t.textContent=yLabel(v);
+    }
+  }
+  for(i=0;i<8;i++){
+    var xv=i*meta.stepX,onx=xv<=meta.xmaxT+1e-6,te=xT[i];
+    te.style.display=onx?'':'none';
+    if(onx){te.setAttribute('x',f1(X(xv)));te.setAttribute('y',C.H-8);te.textContent=nf0.format(xv)+'%'}
+  }
+  pCPA.setAttribute('d','M'+f1(X(0))+' '+f1(y0)+'L'+f1(X(xm))+' '+f1(Y(cpa(xm))));
+  pCPL.setAttribute('d','M'+f1(X(0))+' '+f1(Y(cplv))+'L'+f1(X(xm))+' '+f1(Y(cplv)));
+  pCRG.setAttribute('d','M'+f1(X(0))+' '+f1(Y(crg(0)))+'L'+f1(X(g))+' '+f1(Y(crg(g)))+'L'+f1(X(xm))+' '+f1(Y(crg(xm))));
+  var gx=f1(X(g));
+  gLine.setAttribute('x1',gx);gLine.setAttribute('x2',gx);gLine.setAttribute('y1',f1(y0));gLine.setAttribute('y2',f1(Y(crg(g))));
+  gLbl.setAttribute('x',clamp(gx,C.pl+22,xr-22));gLbl.setAttribute('y',f1(y0-8));
+  gLbl.style.opacity=g<xm*.97?1:0;
+  var mx=f1(X(cv));
+  mLine.setAttribute('x1',mx);mLine.setAttribute('x2',mx);mLine.setAttribute('y1',28);mLine.setAttribute('y2',f1(y0));
+  dCRG.setAttribute('cx',mx);dCRG.setAttribute('cy',f1(Y(crg(cv))));
+  dCPA.setAttribute('cx',mx);dCPA.setAttribute('cy',f1(Y(cpa(cv))));
+  dCPL.setAttribute('cx',mx);dCPL.setAttribute('cy',f1(Y(cplv)));
+  var bw=bubT.textContent.length*7.6+20,bx=clamp(mx,C.pl+bw/2-8,xr-bw/2+4);
+  bubR.setAttribute('width',f1(bw));bubR.setAttribute('x',f1(-bw/2));bub.setAttribute('transform','translate('+f1(bx)+' 3)');
+  bubT.setAttribute('x',0);
+}
+function sizeChart(){
+  var w=Math.round(host.clientWidth);if(!w)return;
+  C.W=w;C.H=Math.round(clamp(w*.62,230,320));
+  svg.setAttribute('viewBox','0 0 '+C.W+' '+C.H);svg.setAttribute('width',C.W);svg.setAttribute('height',C.H);
+  clipR.setAttribute('x',C.pl);clipR.setAttribute('y',C.pt-6);clipR.setAttribute('width',C.W-C.pl-C.pr+4);clipR.setAttribute('height',C.H-C.pt-C.pb+10);
+  render();
+}
+if('ResizeObserver' in window)new ResizeObserver(sizeChart).observe(host);
+else window.addEventListener('resize',sizeChart);
+
+/* перетаскивание: 1:1 за пальцем, захват указателя */
+var drag=null;
+function convFromEvent(e){
+  var r=svg.getBoundingClientRect(),x=(e.clientX-r.left)*(C.W/r.width);
+  var c=(x-C.pl)/(C.W-C.pl-C.pr)*sC.xmax.x;
+  return clamp(Math.round(c*10)/10,0,Math.min(100,lockX!=null?lockX:sC.xmax.x));
+}
+function startDrag(e){
+  chartDrag=true;lockX=meta.xmaxT;
+}
+svg.addEventListener('mousedown',function(e){e.preventDefault()});
+svg.addEventListener('pointerdown',function(e){
+  if(e.button>0)return;
+  drag={id:e.pointerId,x:e.clientX,touch:e.pointerType==='touch',active:false};
+  try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  if(!drag.touch){drag.active=true;startDrag(e);setP('conv',convFromEvent(e),'chip')}
+});
+svg.addEventListener('pointermove',function(e){
+  if(!drag||drag.id!==e.pointerId)return;
+  if(!drag.active){
+    if(Math.abs(e.clientX-drag.x)>6){drag.active=true;startDrag(e)}else return;
+  }
+  setP('conv',convFromEvent(e),'chart');
+});
+function endDrag(e,cancel){
+  if(!drag||drag.id!==e.pointerId)return;
+  var d=drag;drag=null;
+  if(d.touch&&!d.active&&!cancel){startDrag(e);setP('conv',convFromEvent(e),'chip')}
+  chartDrag=false;lockX=null;update('chip');
+}
+svg.addEventListener('pointerup',function(e){endDrag(e,false)});
+svg.addEventListener('pointercancel',function(e){endDrag(e,true)});
+svg.addEventListener('keydown',function(e){
+  var s=e.shiftKey?5:.5;
+  if(e.key==='ArrowRight'||e.key==='ArrowUp'){setP('conv',P.conv+s,'slider');e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){setP('conv',P.conv-s,'slider');e.preventDefault()}
+});
+
+/* ---------- отрисовка кадра ---------- */
+var domCache={};
+function setText(id,t){if(domCache[id]!==t){domCache[id]=t;document.getElementById(id).textContent=t}}
 function render(){
-  syncControls();
-  var m=model();window._m=m;
-  renderResults(m);drawLine(m);renderProbs(m);drawDist(m);
+  K.forEach(function(k){
+    var v=sInc[k].x,t=money(v);
+    setText('v-'+k,t);setText('pv-'+k,t);
+    var pe=$('#p-'+k);
+    if(P.cost>0){
+      var pr=v-P.n*P.cost;
+      pe.hidden=false;
+      pe.innerHTML='после трафика <b class="'+(pr<-0.5?'neg':'')+'">'+(pr<-0.5?'':'+')+money(pr)+'</b>';
+    }else pe.hidden=true;
+  });
+  $('#seg-thumb').style.transform='translateX('+(sThumb.x*100)+'%)';
+  renderChart();
 }
-renderQuiz();render();
-var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){var m=model();window._m=m;drawLine(m);drawDist(m)},80)});
+
+/* ---------- появление, шапка, сводка ---------- */
+if('IntersectionObserver' in window){
+  var rv=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target)}});
+  },{threshold:.08,rootMargin:'0px 0px -4% 0px'});
+  $$('.rv').forEach(function(e){rv.observe(e)});
+
+  var nav=$('#navbar');
+  new IntersectionObserver(function(es){
+    var e=es[es.length-1];nav.classList.toggle('on',!e.isIntersecting&&e.boundingClientRect.top<0);
+  },{rootMargin:'-48px 0px 0px 0px'}).observe($('h1'));
+
+  var pill=$('#pill'),inCalc=false,resVis=false,typing=false;
+  function pillSync(){
+    var on=inCalc&&!resVis&&!typing;
+    pill.classList.toggle('on',on);
+    if(on)pill.removeAttribute('inert');else pill.setAttribute('inert','');
+  }
+  new IntersectionObserver(function(es){inCalc=es[es.length-1].isIntersecting;pillSync()},{rootMargin:'-18% 0px -45% 0px',threshold:0}).observe($('#calc'));
+  new IntersectionObserver(function(es){resVis=es[es.length-1].isIntersecting;pillSync()},{rootMargin:'0px 0px -84px 0px',threshold:0}).observe($('#results'));
+  document.addEventListener('focusin',function(e){typing=e.target.matches&&e.target.matches('input[type=text]');pillSync()});
+  document.addEventListener('focusout',function(){typing=false;pillSync()});
+}else{
+  $$('.rv').forEach(function(e){e.classList.add('in')});
+}
+
+/* ---------- старт ---------- */
+F.forEach(function(f){RG[f.k].value=P[f.k];setPct(f.k);NI[f.k].value=inText(P[f.k])});
+update('init');
+K.forEach(function(k){sInc[k].x=sInc[k].t});
+sThumb.x=sThumb.t;
+Object.keys(sC).forEach(function(k){sC[k].x=sC[k].t});
+sizeChart();
 })();
 </script>
 </body>
