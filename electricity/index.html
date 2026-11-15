@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ru" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Электричество для Игоря — заряженный гайд</title>
+<meta name="description" content="Интерактивный курс по электричеству для Игоря Козлова: амперы, автоматы, блоки питания, пусковые токи, КПД, инверторы и электрокары.">
+<meta name="theme-color" content="#06080f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2306080f'/%3E%3Cpath d='M36 6 14 36h14l-4 22 26-34H35z' fill='%23ffd60a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.className='js'</script>
+</head>
+<body>
+<div class="bg"></div>
+<div class="progress" id="progress"></div>
+<div class="hud" id="hud" aria-live="off"><div class="bat"><i id="hudFill"></i></div><div class="txt"><span class="long">Игорь заряжен на </span><b id="hudPct">0%</b></div></div>
+<nav class="dots" id="dots" aria-label="Главы"></nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="hero" data-scene="hero">
+  <div class="stick">
+    <canvas id="sparks"></canvas>
+    <div class="hero-in" id="heroIn">
+      <div class="eyebrow">Интерактивный курс · специально для <b>Игоря Козлова</b></div>
+      <h1>Электричество.<br><span class="grad">Заряженный</span> гайд.</h1>
+      <p class="sub">Вольты, амперы, автоматы, блоки питания, пусковые токи, КПД, инверторы и электрокары — пошагово, за руку и без занудства.</p>
+    </div>
+    <div class="scroll-hint" id="hint"><i></i>листай вниз</div>
+  </div>
+</header>
+
+<!-- ================= STATEMENT ================= -->
+<section class="statement">
+  <div class="wrap">
+    <p class="scrub" id="scrub1" data-text="Игорь, электричество — это не магия. Это просто *вода по трубам*, только невидимая. И сегодня ты научишься *видеть* её насквозь."></p>
+    <div class="stats">
+      <div class="stat rv"><div class="n volt"><span data-count="230">0</span> В</div><div class="l">напряжение в розетке</div></div>
+      <div class="stat rv" style="--d:.1s"><div class="n amp"><span data-count="50">0</span> Гц</div><div class="l">частота сети</div></div>
+      <div class="stat rv" style="--d:.2s"><div class="n watt"><span data-count="3680">0</span> Вт</div><div class="l">потянет автомат на 16 А</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 1. ВОЛЬТЫ АМПЕРЫ ОМЫ ================= -->
+<section class="chapter" id="ch1" data-nav="Вольт · Ампер · Ом" data-hue="45">
+  <div class="wrap">
+    <div class="kicker rv"><b>1</b> Основа основ</div>
+    <h2 class="rv">Вольт, ампер и ом — <em>три кита</em></h2>
+    <p class="lead rv">Забудь про формулы на минуту. Представь водопровод: есть <b>бак на крыше</b>, <b>труба</b> и <b>вода, которая течёт</b>. Всё электричество — это ровно то же самое.</p>
+
+    <div class="steps">
+      <div class="step rv"><div class="no">1</div><span class="big">🏔️</span><h4><span class="volt">Вольт (В)</span> — давление</h4><p>Насколько высоко стоит бак. Чем выше напряжение — тем сильнее «толкает» заряды. В розетке 230 В, в USB-зарядке 5 В, в автомобиле 12 В.</p></div>
+      <div class="step rv" style="--d:.1s"><div class="no">2</div><span class="big">🌊</span><h4><span class="amp">Ампер (А)</span> — расход</h4><p>Сколько воды течёт через трубу <b>прямо сейчас</b>. Именно ток греет провода и именно его считает автомат: «16 А» — это предел потока.</p></div>
+      <div class="step rv" style="--d:.2s"><div class="no">3</div><span class="big">🚧</span><h4><span class="watt">Ом (Ом)</span> — узкое место</h4><p>Насколько труба узкая или забитая. Больше сопротивление — меньше ток при том же напряжении. Нагрузка (чайник, лампа) — это и есть «сопротивление».</p></div>
+    </div>
+
+    <div class="formula rv"><span class="amp">I</span> = <span class="volt">U</span> / <span class="watt">R</span> &nbsp;·&nbsp; <span class="muted">закон Ома</span></div>
+    <p class="lead rv" style="margin-top:0">Ток = напряжение ÷ сопротивление. Крути ползунки ниже — и смотри, как меняется поток зарядов.</p>
+
+    <div class="card lab rv">
+      <div class="lab-h">Лаборатория · закон Ома</div>
+      <div class="grid2">
+        <div>
+          <canvas class="cv" id="ohmCv" height="260"></canvas>
+        </div>
+        <div>
+          <div class="ctl"><label for="ohmU">Напряжение U <b id="vU">230 В</b></label><input type="range" id="ohmU" min="1" max="400" value="230" style="--c:var(--volt)"></div>
+          <div class="ctl"><label for="ohmR">Сопротивление R <b id="vR">529 Ом</b></label><input type="range" id="ohmR" min="-100" max="300" value="272" style="--c:var(--watt)"></div>
+          <div class="chips" style="margin-bottom:16px">
+            <button class="chip" data-u="5" data-r="5">📱 USB-зарядка</button>
+            <button class="chip" data-u="230" data-r="529">💡 Лампа 100 Вт</button>
+            <button class="chip" data-u="230" data-r="26.5">☕ Чайник 2 кВт</button>
+            <button class="chip" data-u="230" data-r="0.1">💥 Замыкание</button>
+          </div>
+          <div class="out">
+            <div class="o a"><small>Ток I</small><b id="oI">0</b></div>
+            <div class="o w"><small>Мощность P</small><b id="oP">0</b></div>
+          </div>
+          <div class="verdict" id="ohmVerdict"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout blue rv"><div class="ic">💡</div><p><b>Запомни главное:</b> ток зависит от <i>нагрузки</i>, а не от розетки. Розетка «может» дать хоть 16 А — но чайнику с 26 Ом она даст ровно 230 / 26 ≈ 8,7 А. Прибор сам «берёт» ровно столько, сколько ему нужно.</p></div>
+
+    <h3 class="rv" style="margin-top:60px">Словарик на каждый день <span class="muted small">— наведи или нажми на карточку</span></h3>
+    <div class="gloss" id="gloss"></div>
+  </div>
+</section>
+
+<!-- ================= 2. ВАТТЫ ================= -->
+<section class="chapter" id="ch2" data-nav="Ватты и кВт·ч" data-hue="330">
+  <div class="wrap">
+    <div class="kicker rv"><b>2</b> Мощность и энергия</div>
+    <h2 class="rv">Ватт — это <em>скорость</em>. Киловатт-час — это <em>объём</em></h2>
+    <p class="lead rv">Самая частая путаница. Ватты — как «литров в секунду из крана». Киловатт-часы — «сколько литров натекло в ванну». Счётчик в твоей квартире и квитанция считают именно <b>кВт·ч</b>.</p>
+    <div class="formula rv"><span class="watt">P</span> = <span class="volt">U</span> × <span class="amp">I</span> &nbsp;·&nbsp; <span class="ok">E</span> = <span class="watt">P</span> × время</div>
+  </div>
+
+  <!-- sticky: батарея заряжается при скролле -->
+  <div class="scene" id="sceneBat" data-scene="bat">
+    <div class="stick">
+      <div class="ttl"><span class="eyebrow">Листай — батарея заряжается</span></div>
+      <div id="batBolts"></div>
+      <svg id="bat-svg" viewBox="0 0 200 330" aria-hidden="true">
+        <defs>
+          <linearGradient id="batG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff5470"/><stop offset=".5" stop-color="#ffd60a"/><stop offset="1" stop-color="#3ddc84"/></linearGradient>
+          <clipPath id="batClip"><rect x="22" y="48" width="156" height="260" rx="22"/></clipPath>
+        </defs>
+        <rect x="70" y="12" width="60" height="22" rx="8" fill="#fff" opacity=".9"/>
+        <rect x="14" y="40" width="172" height="276" rx="30" fill="none" stroke="#fff" stroke-width="6"/>
+        <g clip-path="url(#batClip)"><rect id="batFill" x="22" y="308" width="156" height="0" fill="url(#batG)"/>
+          <path id="batWave" d="" fill="rgba(255,255,255,.18)"/></g>
+        <path d="M108 112 76 188h28l-10 56 42-84h-30z" fill="#06080f" opacity=".75" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <div class="bignum" id="batNum" style="left:0;right:0;text-align:center;top:15vh">0</div>
+      <div class="cap"><h3 id="batH">Телефон</h3><p id="batP">≈ 15 Вт·ч</p></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="steps">
+      <div class="step rv"><div class="no">1</div><h4>Ватт (Вт) — мощность</h4><p>«Прямо сейчас прибор тянет 2000 Вт». Это как <b>скорость на спидометре</b>. Чайник — 2000 Вт, лампочка — 8 Вт.</p></div>
+      <div class="step rv" style="--d:.1s"><div class="no">2</div><h4>Ватт-час (Вт·ч) — энергия</h4><p>Мощность × время. Чайник 2000 Вт проработал полчаса — это 1000 Вт·ч = <b>1 кВт·ч</b>. Это «километры», которые накрутил спидометр.</p></div>
+      <div class="step rv" style="--d:.2s"><div class="no">3</div><h4>Кило- = ×1000</h4><p>1 кВт = 1000 Вт. 1 кВт·ч стоит у тебя на счётчике несколько рублей (или гривен, или тенге — подставь свой тариф). Это и есть то, за что ты платишь.</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Калькулятор · сколько стоит работа прибора</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><label for="eW">Мощность прибора <b id="veW">2000 Вт</b></label><input type="range" id="eW" min="1" max="5000" value="2000" style="--c:var(--watt)"></div>
+          <div class="ctl"><label for="eH">Часов в сутки <b id="veH">0.5 ч</b></label><input type="range" id="eH" min="0" max="24" step="0.1" value="0.5" style="--c:var(--amp)"></div>
+          <div class="ctl"><label for="eT">Тариф, за 1 кВт·ч</label><input type="number" id="eT" value="6" min="0" step="0.1"></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o gr"><small>В сутки</small><b id="eD">0</b></div>
+            <div class="o gr"><small>В месяц</small><b id="eM">0</b></div>
+            <div class="o w"><small>Стоит в месяц</small><b id="eC">0</b></div>
+          </div>
+          <div class="verdict" id="eV"></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout rv"><div class="ic">🧠</div><p><b>Лайфхак:</b> жрёт не тот, кто мощный, а тот, кто <i>долго</i> работает. Чайник 2 кВт по 10 минут в день — копейки. Роутер в 10 Вт, который крутится 24/7, за год съест 87 кВт·ч.</p></div>
+  </div>
+</section>
+
+<!-- ================= 3. ДОМ ================= -->
+<section class="chapter" id="ch3" data-nav="Что в доме" data-hue="150">
+  <div class="wrap">
+    <div class="kicker rv"><b>3</b> Квартира под микроскопом</div>
+    <h2 class="rv">Кто в доме <em>сколько жрёт</em></h2>
+    <p class="lead rv">Собери свою квартиру. <b>Нажми на прибор</b> — он «включится». Внизу увидишь, сколько тянет весь дом прямо сейчас и выдержит ли это вводной автомат. В карточке можно поменять, сколько часов в сутки прибор работает.</p>
+
+    <div class="card lab rv">
+      <div class="lab-h">Конструктор квартиры</div>
+      <div class="devs" id="devs"></div>
+      <div style="margin-top:28px" class="grid2">
+        <div>
+          <div class="ctl"><div class="lb">Вводной автомат</div>
+            <div class="chips" id="homeBk"></div></div>
+          <div class="gauge"><i id="homeGauge"></i></div>
+          <div class="gl"><span>0</span><span id="homeGl">нагрузка на автомат</span><span id="homeMax"></span></div>
+          <div class="verdict" id="homeV"></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o w"><small>Сейчас</small><b id="homeW">0</b></div>
+            <div class="o a"><small>Ток</small><b id="homeA">0</b></div>
+            <div class="o gr"><small>кВт·ч / мес</small><b id="homeM">0</b></div>
+            <div class="o v"><small>В месяц</small><b id="homeC">0</b></div>
+          </div>
+          <div class="ctl" style="margin-top:14px"><label for="homeT">Тариф за кВт·ч</label><input type="number" id="homeT" value="6" step="0.1" min="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout rv"><div class="ic">🕵️</div><p><b>Расходы месяца считаются иначе, чем «сейчас».</b> Холодильник на этикетке — 150 Вт, но компрессор включён только треть времени. Поэтому у приборов с терморегулятором (холодильник, духовка, обогреватель) мы берём <i>средний</i> коэффициент работы. Это реальная жизнь, а не паспортная мощность.</p></div>
+
+    <h3 class="rv" style="margin-top:50px">Кто в доме <span class="watt">главные жрецы</span></h3>
+    <p class="lead rv" style="margin-top:6px">Правило: всё, что <b>греет</b> (чайник, духовка, утюг, фен, обогреватель, бойлер) — это 1–3 кВт. Всё, что <b>думает</b> (ноутбук, телевизор, роутер) — это 5–150 Вт. Греет → жрёт. Думает → почти ничего.</p>
+  </div>
+</section>
+
+<!-- ================= 4. АВТОМАТЫ ================= -->
+<section class="chapter" id="ch4" data-nav="Автоматы" data-hue="190">
+  <div class="wrap">
+    <div class="kicker rv"><b>4</b> Щиток без страха</div>
+    <h2 class="rv">Автомат — это <em>предохранитель</em>, который не сгорает</h2>
+    <p class="lead rv">Цифра на автомате — «16А» — это <b>максимальный ток, который он готов пропускать долго</b>. Он защищает не прибор, а <b>провод</b>: чтобы тот не раскалился и не устроил пожар.</p>
+
+    <div class="steps">
+      <div class="step rv"><div class="no">1</div><span class="big">🔥</span><h4>Тепловая защита</h4><p>Внутри биметаллическая пластинка. Лёгкая перегрузка → она нагревается и изгибается <b>через секунды–минуты</b>. Чем больше перегруз, тем быстрее.</p></div>
+      <div class="step rv" style="--d:.1s"><div class="no">2</div><span class="big">⚡</span><h4>Электромагнитная защита</h4><p>Катушка срабатывает <b>мгновенно</b> (≈ 10 мс), когда ток в разы превышает номинал — это короткое замыкание.</p></div>
+      <div class="step rv" style="--d:.2s"><div class="no">3</div><span class="big">🅱️</span><h4>Характеристики B, C, D</h4><p>Буква — это «насколько терпеливый» магнитный расцепитель. B — нервный (для света), C — стандарт (розетки), D — терпеливый (моторы).</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Подбор автомата и кабеля</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><label for="bkP">Мощность нагрузки на линии <b id="vbkP">3500 Вт</b></label><input type="range" id="bkP" min="100" max="20000" step="100" value="3500" style="--c:var(--watt)"></div>
+          <div class="ctl"><div class="lb">Сеть</div><div class="chips" id="bkPh"><button class="chip on" data-ph="1">1 фаза · 230 В</button><button class="chip" data-ph="3">3 фазы · 400 В</button></div></div>
+          <div class="ctl" style="margin-bottom:0"><div class="lb">Типовые линии</div><div class="chips">
+            <button class="chip" data-bp="600">💡 Свет · 0,6 кВт</button>
+            <button class="chip" data-bp="3500">🔌 Розетки · 3,5 кВт</button>
+            <button class="chip" data-bp="5500">🍳 Плита · 5,5 кВт</button>
+            <button class="chip" data-bp="11000">🏠 3 фазы · 11 кВт</button></div></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o a"><small>Расчётный ток</small><b id="bkI">0</b></div>
+            <div class="o v"><small>Автомат</small><b id="bkRec">0</b></div>
+            <div class="o gr"><small>Медь, мм²</small><b id="bkCab">0</b></div>
+          </div>
+          <div class="verdict" id="bkV"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout red rv"><div class="ic">🚫</div><p><b>Золотое правило:</b> автомат выбирается <u>под кабель</u>, а не «чтоб не выбивало». Выбивает 16-й? Значит, линия перегружена. Поставишь 25-й на кабель 1,5 мм² — автомат будет молчать, а провод тихо греться в стене. Так и случаются пожары.</p></div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Лаборатория · время срабатывания автомата</div>
+      <div class="grid2">
+        <div>
+          <canvas class="cv" id="tripCv" height="300"></canvas>
+          <p class="muted small" style="margin-top:8px">Оси логарифмические. Кривые — иллюстрация, реальные графики есть в паспорте производителя.</p>
+        </div>
+        <div>
+          <div class="ctl"><div class="lb">Кривая</div><div class="chips" id="curves">
+            <button class="chip" data-c="B">B · 3–5×</button><button class="chip on" data-c="C">C · 5–10×</button><button class="chip" data-c="D">D · 10–20×</button></div></div>
+          <div class="ctl"><label for="bkK">Ток нагрузки в кратностях номинала <b id="vbkK">3.0 × Iн</b></label><input type="range" id="bkK" min="100" max="2500" value="300" style="--c:var(--amp)"></div>
+          <div class="verdict" id="tripV"></div>
+          <div class="tbl" style="margin-top:18px"><table>
+            <tr><th>Тип</th><th>Мгновенно при</th><th>Куда</th></tr>
+            <tr><td class="m">B</td><td class="m">3–5 × Iн</td><td>свет, длинные линии</td></tr>
+            <tr><td class="m">C</td><td class="m">5–10 × Iн</td><td>розетки, быт</td></tr>
+            <tr><td class="m">D</td><td class="m">10–20 × Iн</td><td>моторы, станки, насосы</td></tr>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><span class="big">🛡️</span><h4>УЗО и дифавтомат</h4><p>Обычный автомат спасает провод. <b>УЗО (30 мА)</b> спасает <b>тебя</b>: если ток «утекает» через человека на землю, он выбивает за 30 мс. В ванной и на кухне — обязательно.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">🔢</span><h4>Типовые номиналы</h4><p><span class="mono">6 · 10 · 16 · 20 · 25 · 32 · 40 · 50 · 63 А</span>. Свет — 10 А, розетки — 16 А, плита — 32 А, ввод в квартиру — 25–40 А.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🧮</span><h4>Быстрая прикидка</h4><p>В однофазной сети: <b>ампер ≈ ватт ÷ 230</b>. 2300 Вт ≈ 10 А. 3680 Вт ≈ 16 А. Запомни «230» — и ты уже электрик-прикидчик.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. БЛОКИ ПИТАНИЯ ================= -->
+<section class="chapter" id="ch5" data-nav="Блоки питания" data-hue="260">
+  <div class="wrap">
+    <div class="kicker rv"><b>5</b> Чёрные кирпичики</div>
+    <h2 class="rv">Как читать <em>блок питания</em> и не спалить гаджет</h2>
+    <p class="lead rv">Блок питания (БП) превращает опасные 230 В из розетки в безопасные 5, 12, 19 В. И на каждом лежит этикетка — как паспорт. Давай прочитаем её по кусочкам.</p>
+
+    <div class="card lab rv">
+      <div class="lab-h">Читаем этикетку · нажимай на пунктирные блоки</div>
+      <div class="psu-label">
+        <div class="row"><button class="hs" data-i="model">MODEL: AD-1203G</button><span>Адаптер сетевой</span></div>
+        <div class="row"><span>INPUT:</span><button class="hs" data-i="in-v">100–240 V ~</button><button class="hs" data-i="in-hz">50/60 Hz</button><button class="hs" data-i="in-a">1.2 A</button></div>
+        <div class="row"><span>OUTPUT:</span><button class="hs" data-i="out-v">12 V ⎓</button><button class="hs" data-i="out-a">3 A</button><button class="hs" data-i="out-w">36 W</button></div>
+        <div class="row"><button class="hs" data-i="pol">⊖—●—⊕</button><button class="hs" data-i="cl2">▢▢</button><button class="hs" data-i="eff">Level VI</button></div>
+      </div>
+      <div class="hs-info" id="hsInfo"><b>Нажми на любой пунктирный блок</b> — расскажу, что это значит.</div>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><div class="no">1</div><span class="big">🎯</span><h4>Напряжение — <span class="volt">точно такое же</span></h4><p>Если на приборе «12 В» — нужен БП на <b>12 В</b>. Не 9 и не 19. Перепутаешь — прибор либо не включится, либо сгорит.</p></div>
+      <div class="step rv" style="--d:.1s"><div class="no">2</div><span class="big">⬆️</span><h4>Ток — <span class="amp">с запасом</span></h4><p>БП на 3 А питает прибор на 1 А — всё ок. Прибор берёт, сколько надо. Но если БП <b>слабее</b> — перегрев, просадки, перезагрузки.</p></div>
+      <div class="step rv" style="--d:.2s"><div class="no">3</div><span class="big">🔌</span><h4>Полярность и разъём</h4><p>Знак «⊖—●—⊕» — плюс в центре или наоборот. Перепутал полярность — прощай, плата. Размер штекера тоже должен сойтись.</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Подбери блок питания</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><div class="lb">Что питаем</div><div class="chips" id="psuDevs"></div></div>
+          <div class="grid2" style="gap:12px">
+            <div class="ctl"><label for="psuU">Вольты</label><input type="number" id="psuU" value="12" step="0.5" min="1"></div>
+            <div class="ctl"><label for="psuIn">Ток прибора, А</label><input type="number" id="psuIn" value="1" step="0.1" min="0.05"></div>
+          </div>
+          <div class="ctl"><label for="psuHave">Какой БП у тебя под рукой <b id="vpsuHave">2 А</b></label><input type="range" id="psuHave" min="5" max="400" value="20" style="--c:var(--ok)"></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o w"><small>Мощность прибора</small><b id="psuW">0</b></div>
+            <div class="o v"><small>Бери БП</small><b id="psuRec">0</b></div>
+          </div>
+          <div class="gauge"><i id="psuGauge"></i></div>
+          <div class="gl"><span>0%</span><span>загрузка твоего БП</span><span>100%</span></div>
+          <div class="verdict" id="psuV"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><span class="big">🧱</span><h4>Линейный (трансформатор)</h4><p>Тяжёлый «кирпич»: понижает напряжение железным сердечником. Просто и надёжно, но тяжёлый и греется — КПД 40–60 %. Встречается в старой технике.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">🪶</span><h4>Импульсный</h4><p>Лёгкий, как зарядка телефона. Внутри — электроника, которая «рубит» ток десятки тысяч раз в секунду. КПД 85–95 %, диапазон 100–240 В — работает в любой стране.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🌡️</span><h4>Греется — это нормально?</h4><p>Тёплый — норма. Горячий, что руку не держишь, пахнет или щёлкает — <b>выбрасывай</b>. Дешёвые БП без запаса по току — частая причина пожаров.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6. ПУСКОВОЙ ТОК ================= -->
+<section class="chapter" id="ch6" data-nav="Пусковой ток" data-hue="20">
+  <div class="wrap">
+    <div class="kicker rv"><b>6</b> Укус при включении</div>
+    <h2 class="rv">Пусковой ток — <em>пинок в момент старта</em></h2>
+    <p class="lead rv">Многие приборы в первое мгновение берут ток <b>в 3–40 раз больше</b>, чем потом. Холодильник толкает ротор мотора с места. Лампа накаливания — холодная нить почти без сопротивления. Блок питания — разряженные конденсаторы, как пустые бочки, которые надо наполнить.</p>
+
+    <div class="card lab rv">
+      <div class="lab-h">Осциллограф · пусковой ток разных приборов</div>
+      <div class="chips" id="inrDevs" style="margin-bottom:16px"></div>
+      <canvas class="cv" id="inrCv" height="300"></canvas>
+      <div class="out" style="margin-top:16px">
+        <div class="o w"><small>Пик</small><b id="inrPeak">0</b></div>
+        <div class="o a"><small>Рабочий ток</small><b id="inrRun">0</b></div>
+        <div class="o v"><small>Кратность</small><b id="inrK">0</b></div>
+        <div class="o gr"><small>Длится</small><b id="inrT">0</b></div>
+      </div>
+      <div class="verdict" id="inrV"></div>
+      <button class="btn ghost" id="inrReplay" style="margin-top:14px">↻ Повторить запуск</button>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><span class="big">🧊</span><h4>Почему это важно</h4><p>Автомат C16 спокойно переживёт пик холодильника — он короткий. Но <b>генератор, инвертор и ИБП</b> имеют лимит пиковой мощности. Не посчитал пик — устройство «упало» при старте.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">🧲</span><h4>Что делать</h4><p>Подбирай источник с запасом: <b>для моторов ×3–7</b>. Включай тяжёлые приборы <b>по очереди</b>, а не все сразу. Ищи «плавный пуск» (soft-start) и инверторные модели.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🌡️</span><h4>NTC-термистор в БП</h4><p>В хороших блоках питания стоит «термистор» — холодным он имеет большое сопротивление и душит пик. Прогрелся — сопротивление падает. Поэтому после мгновенного выключения-включения щёлкнуть может сильнее.</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Подбор генератора или инвертора с учётом пуска</div>
+      <p class="muted small">Отметь, что хочешь запитать одновременно.</p>
+      <div class="devs" id="surgeList" style="margin-bottom:22px"></div>
+      <div class="out">
+        <div class="o w"><small>Рабочая мощность</small><b id="sgRun">0</b></div>
+        <div class="o v"><small>Пик при старте</small><b id="sgPeak">0</b></div>
+        <div class="o gr"><small>Инвертор от</small><b id="sgInv">0</b></div>
+      </div>
+      <div class="verdict" id="sgV"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. КПД ================= -->
+<section class="chapter" id="ch7" data-nav="КПД" data-hue="120">
+  <div class="wrap">
+    <div class="kicker rv"><b>7</b> Куда уходит энергия</div>
+    <h2 class="rv">КПД — <em>сколько дошло</em> до дела</h2>
+    <p class="lead rv">Энергия не исчезает — она превращается в тепло. КПД показывает, <b>какая доля</b> энергии из розетки реально сделала полезную работу, а какая просто нагрела воздух. Блок питания с КПД 85 % на каждые 100 Вт из розетки выдаёт 85, а 15 Вт — греются.</p>
+    <div class="formula rv"><span class="ok">η</span> = P<sub>полезная</sub> / P<sub>из сети</sub> × 100%</div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Лаборатория · цена потерь</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><label for="effP">Полезная мощность <b id="veffP">300 Вт</b></label><input type="range" id="effP" min="5" max="3000" value="300" style="--c:var(--watt)"></div>
+          <div class="ctl"><label for="effE">КПД <b id="veffE">85 %</b></label><input type="range" id="effE" min="30" max="99" value="85" style="--c:var(--ok)"></div>
+          <div class="ctl"><label for="effH">Работает в сутки <b id="veffH">8 ч</b></label><input type="range" id="effH" min="1" max="24" value="8" style="--c:var(--amp)"></div>
+          <div class="chips"><button class="chip" data-ee="35">🧱 Линейный БП · 35</button><button class="chip" data-ee="85">🔌 Дешёвый БП · 85</button><button class="chip" data-ee="94">🚀 Хороший БП · 94</button></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o w"><small>Из розетки</small><b id="effIn">0</b></div>
+            <div class="o bad"><small>Тепло, Вт</small><b id="effHeat" class="bad">0</b></div>
+            <div class="o gr"><small>Потери за год</small><b id="effYear">0</b></div>
+          </div>
+          <div style="margin-top:16px">
+            <div class="gauge" style="height:34px"><i id="effUse" style="background:var(--ok)"></i></div>
+            <div class="gl"><span class="ok">полезная работа</span><span class="bad">нагрев воздуха</span></div>
+          </div>
+          <div class="verdict" id="effV"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><span class="big">⛓️</span><h4>КПД перемножаются</h4><p>Если цепочка из нескольких звеньев (панель → контроллер → АКБ → инвертор), общий КПД — <b>произведение</b>. 0,98 × 0,95 × 0,92 = 0,86. Каждое звено «откусывает».</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">💡</span><h4>Лампочки</h4><p>Лампа накаливания превращает в свет ≈ 5 % энергии, остальное — тепло. Светодиодная — 20–40 %. Поэтому 9 Вт LED светит как 60-ваттная лампа накаливания.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🚗</span><h4>Двигатели</h4><p>Электродвигатель — 85–95 %. Бензиновый — 25–35 %. Поэтому электрокар «жрёт» в 3 раза меньше энергии на километр.</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Цепочка потерь · собери свою</div>
+      <div class="chips" id="chainPre" style="margin-bottom:16px"></div>
+      <div id="chainBox"></div>
+      <div class="verdict" id="chainV"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8. ИНВЕРТОРЫ ================= -->
+<section class="chapter" id="ch8" data-nav="Инверторы" data-hue="300">
+  <div class="wrap">
+    <div class="kicker rv"><b>8</b> Волшебные преобразователи</div>
+    <h2 class="rv">Инвертор — это <em>переводчик</em> с языка батареи на язык розетки</h2>
+    <p class="lead rv">Батарея выдаёт <b>постоянный ток</b> (DC): ровный, как прямая линия. Розетка — <b>переменный</b> (AC): синусоида 50 раз в секунду. Инвертор — это электронный «переводчик» из одного в другой. Слово «инвертор» ещё встречается в кондиционерах — но там совсем другая история. Разберём обе.</p>
+
+    <div class="card lab rv">
+      <div class="lab-h">Осциллограф · форма напряжения</div>
+      <canvas class="cv" id="sineCv" height="260"></canvas>
+      <div class="chips" id="waves" style="margin-top:16px">
+        <button class="chip on" data-w="sine">〰️ Чистый синус</button>
+        <button class="chip" data-w="mod">🪜 Модифицированный</button>
+        <button class="chip" data-w="sq">⬛ Меандр</button>
+      </div>
+      <div class="verdict" id="waveV"></div>
+    </div>
+
+    <div class="steps">
+      <div class="step rv"><span class="big">✅</span><h4>Чистый синус</h4><p>Как в розетке. Подходит для <b>всего</b>: котлы, насосы, холодильники, электроника. Чуть дороже, но спокойнее.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">⚠️</span><h4>Модифицированный</h4><p>Ступенчатая «ломаная». Чайник и лампы переживут. Моторы гудят и греются, а некоторые БП и циркуляционные насосы <b>не любят</b>.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🧠</span><h4>«Инверторный» кондиционер</h4><p>Здесь инвертор плавно меняет <b>обороты мотора</b> компрессора. Нет резких пусков, нет щелчков и экономия 30–50 %. Тот же принцип в «инверторных» холодильниках и стиралках.</p></div>
+    </div>
+
+    <div class="card lab rv">
+      <div class="lab-h">Калькулятор · инвертор + аккумулятор</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><label for="invP">Нагрузка <b id="vinvP">1500 Вт</b></label><input type="range" id="invP" min="50" max="5000" step="50" value="1500" style="--c:var(--watt)"></div>
+          <div class="ctl"><div class="lb">Напряжение аккумулятора</div><div class="chips" id="invV"><button class="chip on" data-v="12">12 В</button><button class="chip" data-v="24">24 В</button><button class="chip" data-v="48">48 В</button></div></div>
+          <div class="ctl"><label for="invAh">Ёмкость АКБ <b id="vinvAh">100 А·ч</b></label><input type="range" id="invAh" min="20" max="400" step="10" value="100" style="--c:var(--ok)"></div>
+          <div class="ctl"><div class="lb">Тип аккумулятора</div><div class="chips" id="invC"><button class="chip" data-d="0.5">Свинцовый · 50 %</button><button class="chip on" data-d="0.9">LiFePO₄ · 90 %</button></div></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o a"><small>Ток из АКБ</small><b id="invI">0</b></div>
+            <div class="o v"><small>Медь, мм²</small><b id="invS">0</b></div>
+            <div class="o gr"><small>Проработает</small><b id="invT">0</b></div>
+          </div>
+          <div class="verdict" id="invVd"></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout red rv"><div class="ic">😱</div><p><b>Вот почему мощные инверторы делают на 24 и 48 В.</b> 2000 Вт при 12 В — это почти <b>190 А</b>. Провода толщиной с палец, клеммы греются, искрит. А те же 2000 Вт на 48 В — «всего» 46 А. Мощность та же, ток в четыре раза меньше. Напряжение — друг.</p></div>
+  </div>
+</section>
+
+<!-- ================= 9. ЭЛЕКТРОКАР ================= -->
+<section class="chapter" id="ch9" data-nav="Электрокар" data-hue="200">
+  <div class="wrap">
+    <div class="kicker rv"><b>9</b> Заряжаем будущее</div>
+    <h2 class="rv">Электрокар — это <em>всё то же самое</em>, только больше</h2>
+    <p class="lead rv">Батарея 60 кВт·ч, зарядка 7 кВт, КПД 90 % — теперь ты и сам умеешь считать это. Листай — и посмотри, как он приезжает, паркуется и заряжается.</p>
+  </div>
+
+  <div class="scene" id="sceneCar" data-scene="car" style="height:380vh">
+    <div class="stick">
+      <div class="ttl"><span class="eyebrow" id="carStep">Едет к зарядке…</span></div>
+      <svg id="car-svg" viewBox="0 0 1000 420" aria-hidden="true">
+        <defs>
+          <linearGradient id="carG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ddc84"/><stop offset="1" stop-color="#14a45a"/></linearGradient>
+          <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fe0ff"/><stop offset="1" stop-color="#2a6fa0"/></linearGradient>
+          <linearGradient id="packG" x1="0" x2="1"><stop offset="0" stop-color="#ff5470"/><stop offset=".5" stop-color="#ffd60a"/><stop offset="1" stop-color="#3ddc84"/></linearGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <clipPath id="packClip"><rect x="64" y="104" width="258" height="12" rx="6"/></clipPath>
+        </defs>
+        <rect x="-200" y="334" width="1400" height="120" fill="#0b1020"/>
+        <line x1="-200" y1="334" x2="1200" y2="334" stroke="#2a3350" stroke-width="3"/>
+        <line id="roadDash" x1="-200" y1="378" x2="1200" y2="378" stroke="#2a3350" stroke-width="5" stroke-dasharray="46 40"/>
+        <!-- зарядная станция -->
+        <g id="charger">
+          <rect x="798" y="170" width="76" height="164" rx="16" fill="#131a2e" stroke="#3ddc84" stroke-width="3"/>
+          <rect x="811" y="186" width="50" height="40" rx="7" fill="#000"/>
+          <text id="chgTxt" x="836" y="213" text-anchor="middle" fill="#3ddc84" font-size="20" font-weight="800" font-family="ui-monospace,monospace">0%</text>
+          <circle id="chgLed" cx="836" cy="246" r="7" fill="#ff5470" filter="url(#glow)"/>
+          <path d="M840 266 826 290h10l-3 18 16-24h-10z" fill="#ffd60a"/>
+        </g>
+        <path id="cableBase" d="M798 250 C 750 250, 735 300, 690 286" fill="none" stroke="#1b2540" stroke-width="9" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        <path id="cableFlow" class="flow" d="M798 250 C 750 250, 735 300, 690 286" fill="none" stroke="#ffd60a" stroke-width="4" stroke-linecap="round" filter="url(#glow)" opacity="0"/>
+        <!-- машина -->
+        <g id="car" transform="translate(-460,196)">
+          <ellipse cx="200" cy="146" rx="190" ry="10" fill="#000" opacity=".4"/>
+          <path d="M18 118 L18 100 Q18 88 40 84 L104 78 Q140 40 195 38 L262 40 Q304 46 326 80 L368 88 Q386 92 386 108 L386 118 Z" fill="url(#carG)"/>
+          <path d="M122 78 Q146 50 192 48 L254 50 Q282 54 298 78 Z" fill="url(#glassG)" opacity=".92"/>
+          <line x1="206" y1="50" x2="206" y2="78" stroke="#14a45a" stroke-width="4"/>
+          <rect x="64" y="104" width="258" height="12" rx="6" fill="#0a1a12" opacity=".7"/>
+          <rect id="carPack" x="64" y="104" width="0" height="12" fill="url(#packG)" clip-path="url(#packClip)"/>
+          <rect x="366" y="92" width="18" height="8" rx="3" fill="#ffd60a" filter="url(#glow)"/>
+          <rect x="18" y="92" width="10" height="8" rx="3" fill="#ff5470"/>
+          <circle cx="352" cy="94" r="5" fill="#0b1020" stroke="#ffd60a" stroke-width="2"/>
+          <g><circle cx="96" cy="118" r="32" fill="#0b1020"/><g id="wA"><circle cx="96" cy="118" r="26" fill="#1a2035" stroke="#555" stroke-width="3"/><path d="M96 96v44M74 118h44M80 102l32 32M112 102l-32 32" stroke="#8e98b0" stroke-width="3"/><circle cx="96" cy="118" r="6" fill="#ddd"/></g></g>
+          <g><circle cx="300" cy="118" r="32" fill="#0b1020"/><g id="wB"><circle cx="300" cy="118" r="26" fill="#1a2035" stroke="#555" stroke-width="3"/><path d="M300 96v44M278 118h44M284 102l32 32M316 102l-32 32" stroke="#8e98b0" stroke-width="3"/><circle cx="300" cy="118" r="6" fill="#ddd"/></g></g>
+        </g>
+        <circle id="plug" cx="690" cy="286" r="0" fill="#ffd60a" filter="url(#glow)"/>
+      </svg>
+      <div class="bignum" id="carNum" style="left:50%;transform:translateX(-50%);top:19vh">0%</div>
+      <div class="cap"><h3 id="carH">Подъезжает</h3><p id="carP">Батарея почти пуста · 10 %</p></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card lab rv">
+      <div class="lab-h">Калькулятор · время зарядки</div>
+      <div class="grid2">
+        <div>
+          <div class="ctl"><label for="evB">Ёмкость батареи <b id="vevB">60 кВт·ч</b></label><input type="range" id="evB" min="20" max="120" value="60" style="--c:var(--volt)"></div>
+          <div class="ctl"><label>Зарядить с <b id="vevR">10 % → 80 %</b></label>
+            <input type="range" id="evF" min="0" max="90" value="10" style="--c:var(--bad);margin-bottom:12px">
+            <input type="range" id="evT" min="10" max="100" value="80" style="--c:var(--ok)"></div>
+          <div class="ctl"><div class="lb">Чем заряжаем</div><div class="chips" id="evCh"></div></div>
+          <div class="ctl"><label for="evTar">Тариф за кВт·ч</label><input type="number" id="evTar" value="6" step="0.1" min="0"></div>
+        </div>
+        <div>
+          <div class="out">
+            <div class="o a"><small>Время</small><b id="evTime">0</b></div>
+            <div class="o w"><small>Энергия из сети</small><b id="evKwh">0</b></div>
+            <div class="o gr"><small>Добавится</small><b id="evKm">0</b></div>
+            <div class="o v"><small>Стоимость</small><b id="evCost">0</b></div>
+          </div>
+          <div class="gauge" style="height:26px"><i id="evBar"></i></div>
+          <div class="gl"><span id="evFromTxt">10%</span><span>батарея</span><span id="evToTxt">80%</span></div>
+          <div class="verdict" id="evV"></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout rv"><div class="ic">🔌</div><p><b>Что такое «медленная» и «быстрая» зарядка.</b> Медленная (AC) — это обычная розетка и домашняя Wallbox: заряд идёт <i>переменным током</i>, а выпрямляет его бортовой зарядник в машине. Быстрая (DC) — станция сама выдаёт постоянный ток прямо в батарею, обходя бортовой зарядник. Отсюда 50–250 кВт. Выше 80 % она сильно замедляется — берегут батарею.</p></div>
+  </div>
+</section>
+
+<!-- ================= 10. БЕЗОПАСНОСТЬ ================= -->
+<section class="chapter" id="ch10" data-nav="Безопасность" data-hue="0">
+  <div class="wrap">
+    <div class="kicker rv"><b>10</b> Главное</div>
+    <h2 class="rv">Чтобы остаться <em>заряженным</em>, а не <em>заряженным током</em></h2>
+    <div class="steps">
+      <div class="step rv"><span class="big">🛑</span><h4>Обесточь</h4><p>Любая работа в щитке и с проводкой — только <b>при выключенном вводном автомате</b> и после проверки индикатором напряжения. «Я же только на секундочку» — классика жанра.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">🔥</span><h4>Греется вилка?</h4><p>Тёплая или тёмная вилка/розетка — плохой контакт или перегруз. Пора менять розетку и смотреть, что в неё воткнуто. Не жди, пока «расплавится».</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">🔌</span><h4>Удлинитель-гирлянда</h4><p>Тройник + чайник 2 кВт + обогреватель 2 кВт = 4 кВт = 17 А. Это выше номинала розетки и автомата. Мощные приборы — в отдельные розетки напрямую.</p></div>
+      <div class="step rv"><span class="big">⏚</span><h4>Заземление</h4><p>Третий провод. Если на корпусе окажется напряжение — оно уйдёт в землю, а не через тебя. Вместе с УЗО — главная защита.</p></div>
+      <div class="step rv" style="--d:.1s"><span class="big">🧯</span><h4>Не «усиливай» автомат</h4><p>Не ставь автомат побольше и не вставляй «жучки». Автомат — последний страж. Перегруз? Распредели нагрузку или меняй кабель, а не автомат.</p></div>
+      <div class="step rv" style="--d:.2s"><span class="big">👨‍🔧</span><h4>Сомневаешься — электрик</h4><p>Всё, что ты узнал, — чтобы <b>понимать</b>, а не лезть в щиток вслепую. Монтаж, замена автоматов и прокладка кабеля — для специалиста.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ФИНАЛ ================= -->
+<section class="chapter" id="finale" data-nav="Финал" data-hue="45">
+  <div class="wrap">
+    <div class="kicker rv"><b>⚡</b> Последний уровень</div>
+    <h2 class="rv">Проверка <em>на заряженность</em></h2>
+    <p class="lead rv">Восемь вопросов. Ответишь верно — получишь сертификат. Ну, а если нет, то сертификат всё равно получишь, просто поскромнее 😎</p>
+    <div class="card rv" id="quizCard" style="margin-top:30px">
+      <div class="q-bar"><i id="qBar"></i></div>
+      <div id="quiz"></div>
+    </div>
+    <div id="certBox" style="display:none;margin-top:30px"></div>
+  </div>
+</section>
+
+<footer><div class="wrap">⚡ Сделано с зарядом для Игоря Козлова. Справочные значения — ориентировочные; для реальной проводки смотри ПУЭ, паспорта изделий и звони электрику.</div></footer>
+
+<canvas id="confetti"></canvas>
+<noscript><style>.rv{opacity:1!important;filter:none!important;transform:none!important}</style></noscript>
+<script src="app.js"></script>
+</body>
+</html>
