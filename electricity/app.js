@@ -32,7 +32,7 @@ function fmtH(h) {
 function setVerdict(el, cls, html) { el.className = 'verdict ' + cls; el.innerHTML = html; }
 function paint(el) { el.style.setProperty('--v', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
 $$('input[type=range]').forEach(r => { paint(r); r.addEventListener('input', () => paint(r)); });
-function bind(ids, fn) { ids.forEach(id => $('#' + id).addEventListener('input', fn)); }
+function bind(ids, fn) { ids.forEach(id => { const e = $('#' + id); if (e) e.addEventListener('input', fn); }); }
 
 /* ---------- canvas helper ---------- */
 function fit(cv) {
