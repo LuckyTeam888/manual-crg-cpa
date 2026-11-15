@@ -10,6 +10,7 @@ const easeOut = t => 1 - Math.pow(1 - t, 3);
 const nfm = new Intl.NumberFormat('ru-RU');
 const nf = (n, d = 0) => new Intl.NumberFormat('ru-RU', { maximumFractionDigits: d, minimumFractionDigits: 0 }).format(n);
 const TAU = Math.PI * 2;
+const TARIFF = 4.32;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const vh = () => window.innerHeight;
 
@@ -214,16 +215,12 @@ watch(sp);
    Словарик
    ========================================================= */
 const gl = [
-  ['V', 'Вольт', 'Напряжение — «давление» электричества. В розетке 230 В, в USB 5 В.'],
-  ['A', 'Ампер', 'Сила тока — «расход». Именно её ограничивает автомат.'],
-  ['Ω', 'Ом', 'Сопротивление. Чем больше — тем меньше ток при том же напряжении.'],
-  ['W', 'Ватт', 'Мощность: 1 Вт = 1 В × 1 А. Как быстро прибор потребляет энергию.'],
-  ['кВт·ч', 'Киловатт-час', 'Энергия. 1 кВт·ч = 1000 Вт работы в течение часа. Это пишет счётчик.'],
-  ['ВА', 'Вольт-ампер', 'Полная мощность (ИБП, трансформаторы). Ватты = ВА × cos φ.'],
-  ['Гц', 'Герц', 'Сколько раз в секунду ток меняет направление. В сети — 50 Гц.'],
-  ['cos φ', 'Коэффициент мощности', 'Доля полезной мощности. У чайника 1, у моторов ≈ 0,8, у плохих БП ≈ 0,6.']
+  ['кВт·ч', 'Киловатт-час', 'Энергия. Её пишет счётчик. 1 кВт·ч = 1000 Вт за час.'],
+  ['ВА', 'Вольт-ампер', 'Полная мощность. Для ИБП. Ватты = ВА × cos φ.'],
+  ['Гц', 'Герц', 'Сколько раз в секунду ток меняет направление. В сети — 50.'],
+  ['cos φ', 'Коэф. мощности', 'Доля пользы. Чайник — 1. Моторы — 0,8.']
 ];
-$('#gloss').innerHTML = gl.map((g, i) => `<div class="g rv" style="--d:${i * .05}s"><div class="g-in"><div class="g-f"><div class="sym ${['volt', 'amp', 'watt', 'volt', 'ok', 'amp', 'watt', 'volt'][i]}">${g[0]}</div><div class="nm">${g[1]}</div></div><div class="g-b">${g[2]}</div></div></div>`).join('');
+$('#gloss').innerHTML = gl.map((g, i) => `<div class="g rv" style="--d:${i * .05}s"><div class="g-in"><div class="g-f"><div class="sym ${['ok', 'amp', 'watt', 'volt'][i]}">${g[0]}</div><div class="nm">${g[1]}</div></div><div class="g-b">${g[2]}</div></div></div>`).join('');
 $$('.g').forEach(g => { rvIO.observe(g); g.addEventListener('click', () => g.classList.toggle('flip')); });
 
 /* =========================================================
@@ -239,10 +236,10 @@ function ohmCalc() {
   $('#oI').textContent = fmtA(ohm.I); $('#oP').textContent = fmtW(ohm.P);
   const k = ohm.I / 16, P = ohm.P;
   const what = P < 15 ? 'как зарядка телефона' : P < 200 ? 'как лампочка или ноутбук' : P < 3000 ? 'как бытовой нагреватель' : 'как промышленная установка';
-  if (ohm.I > 80) setVerdict($('#ohmVerdict'), 'bad', '💥 Короткое замыкание! Ток ' + fmtA(ohm.I) + ' — это <b>' + nf(k, 0) + '×</b> от 16 А. Автомат выбьет мгновенно — за ~10 мс. Для этого он и нужен.');
-  else if (ohm.I > 16) setVerdict($('#ohmVerdict'), 'bad', '🚨 ' + fmtA(ohm.I) + ' — выше 16 А. Автомат на 16 А отключится (чем сильнее перегруз, тем быстрее). Нагрузка ' + what + '.');
-  else if (ohm.I > 12) setVerdict($('#ohmVerdict'), 'warn', '⚠️ ' + fmtA(ohm.I) + ' — почти предел автомата 16 А. Нагрузка ' + what + '.');
-  else setVerdict($('#ohmVerdict'), 'good', '✅ ' + fmtA(ohm.I) + ' — спокойно для линии 16 А. Нагрузка ' + what + (ohm.U < 50 ? ' · напряжение безопасное' : '') + '.');
+  if (ohm.I > 80) setVerdict($('#ohmVerdict'), 'bad', '💥 Замыкание! ' + fmtA(ohm.I) + ' — это <b>' + nf(k, 0) + '×</b> от 16 А. Автомат выбьет за 10 мс.');
+  else if (ohm.I > 16) setVerdict($('#ohmVerdict'), 'bad', '🚨 ' + fmtA(ohm.I) + ' — выше 16 А. Автомат отключит. Нагрузка ' + what + '.');
+  else if (ohm.I > 12) setVerdict($('#ohmVerdict'), 'warn', '⚠️ ' + fmtA(ohm.I) + ' — почти предел 16 А. Нагрузка ' + what + '.');
+  else setVerdict($('#ohmVerdict'), 'good', '✅ ' + fmtA(ohm.I) + ' — спокойно. Нагрузка ' + what + (ohm.U < 50 ? '. Напряжение безопасное' : '') + '.');
 }
 bind(['ohmU', 'ohmR'], ohmCalc);
 $$('[data-u]').forEach(b => b.addEventListener('click', () => {
@@ -284,6 +281,50 @@ function drawOhm(t) {
   c.fillStyle = 'rgba(255,255,255,.5)'; c.font = '600 12px ui-monospace,monospace'; c.fillText('ток в цепи', w / 2, h / 2 + 26);
 }
 
+
+/* карточки-«пилларсы»: нажми — пример */
+$$('.pillar').forEach(p => { p.querySelector('.ex').textContent = p.dataset.ex; p.addEventListener('click', () => p.classList.toggle('open')); });
+
+/* калькулятор: знаешь два — получишь два */
+const Q4 = { U: ['В', 'Вольт', 'volt'], I: ['А', 'Ампер', 'amp'], R: ['Ом', 'Ом', 'watt'], P: ['Вт', 'Ватт', 'volt'] };
+let k4 = ['U', 'P'], v4 = { U: 230, I: 0, R: 0, P: 2000 };
+const f4 = x => !isFinite(x) ? '—' : nf(x, x < 10 ? 2 : x < 1000 ? 1 : 0);
+function calc4Solve() {
+  const [a, b] = k4, has = (x, y) => (a === x && b === y) || (a === y && b === x), v = v4;
+  if (has('U', 'I')) { v.R = v.U / v.I; v.P = v.U * v.I; }
+  else if (has('U', 'R')) { v.I = v.U / v.R; v.P = v.U * v.U / v.R; }
+  else if (has('U', 'P')) { v.I = v.P / v.U; v.R = v.U * v.U / v.P; }
+  else if (has('I', 'R')) { v.U = v.I * v.R; v.P = v.I * v.I * v.R; }
+  else if (has('I', 'P')) { v.U = v.P / v.I; v.R = v.P / (v.I * v.I); }
+  else { v.U = Math.sqrt(v.P * v.R); v.I = Math.sqrt(v.P / v.R); }
+}
+function calc4Update() {
+  calc4Solve();
+  ['U', 'I', 'R', 'P'].forEach(k => { const e = $('#c4v-' + k); if (e && e.tagName !== 'INPUT') e.textContent = f4(v4[k]); });
+  const I = v4.I;
+  if (!isFinite(I)) setVerdict($('#calc4V'), 'warn', 'Введи числа больше нуля.');
+  else if (I > 16) setVerdict($('#calc4V'), 'bad', `Ток ${f4(I)} А — автомат 16 А выбьет.`);
+  else setVerdict($('#calc4V'), 'good', `Ток ${f4(I)} А — линия 16 А тянет.`);
+}
+function calc4Render() {
+  calc4Solve();
+  $('#calc4').innerHTML = ['U', 'I', 'R', 'P'].map(k => {
+    const kn = k4.includes(k);
+    return `<div class="ft${kn ? ' known' : ''}" data-k="${k}"><div class="sy ${Q4[k][2]}">${k}</div><div class="nm">${Q4[k][1]}</div><div class="val">${kn ? `<input type="number" id="c4v-${k}" value="${+(+v4[k]).toPrecision(5)}" step="any" min="0">` : `<span id="c4v-${k}">${f4(v4[k])}</span>`}<span class="muted small">${Q4[k][0]}</span></div><div class="tg">${kn ? '✓ знаю' : 'нажми — знаю'}</div></div>`;
+  }).join('');
+  calc4Update();
+}
+$('#calc4').addEventListener('click', e => {
+  const t = e.target.closest('.ft'); if (!t || e.target.tagName === 'INPUT') return;
+  const k = t.dataset.k; if (k4.includes(k)) return;
+  k4 = [k4[1], k]; calc4Render();
+});
+$('#calc4').addEventListener('input', e => {
+  if (e.target.tagName !== 'INPUT') return;
+  const k = e.target.id.slice(4); v4[k] = Math.max(1e-6, +e.target.value || 0); calc4Update();
+});
+calc4Render();
+
 /* =========================================================
    2. БАТАРЕЯ (sticky) и калькулятор
    ========================================================= */
@@ -318,13 +359,13 @@ function waveTick(t) {
 const bat_svg = $('#bat-svg'); watch(bat_svg);
 
 function energyCalc() {
-  const W = +$('#eW').value, H = +$('#eH').value, T = +$('#eT').value || 0;
+  const W = +$('#eW').value, H = +$('#eH').value, T = TARIFF;
   $('#veW').textContent = nf(W) + ' Вт'; $('#veH').textContent = nf(H, 1) + ' ч';
-  const d = W * H / 1000; $('#eD').textContent = nf(d, 2) + ' кВт·ч'; $('#eM').textContent = nf(d * 30, 1) + ' кВт·ч'; $('#eC').textContent = nf(d * 30 * T, 0) + ' ₽';
+  const d = W * H / 1000; $('#eD').textContent = nf(d, 2) + ' кВт·ч'; $('#eM').textContent = nf(d * 30, 1) + ' кВт·ч'; $('#eC').textContent = nf(d * 30 * T, 0) + ' грн';
   const kitchen = W >= 1000;
-  setVerdict($('#eV'), d * 30 * T > 500 ? 'warn' : 'good', `${kitchen ? 'Мощный прибор' : 'Скромный прибор'}: ${fmtW(W)} × ${nf(H, 1)} ч = <b>${nf(d, 2)} кВт·ч</b> в сутки. За год — ${nf(d * 365, 0)} кВт·ч, это около <b>${nf(d * 365 * T, 0)} ₽</b>.`);
+  setVerdict($('#eV'), d * 30 * T > 500 ? 'warn' : 'good', `${fmtW(W)} × ${nf(H, 1)} ч = <b>${nf(d, 2)} кВт·ч</b> в сутки. За год: <b>${nf(d * 365 * T, 0)} грн</b>.`);
 }
-bind(['eW', 'eH', 'eT'], energyCalc); energyCalc();
+bind(['eW', 'eH'], energyCalc); energyCalc();
 
 /* =========================================================
    3. ДОМ
@@ -344,13 +385,13 @@ $('#homeBk').innerHTML = [16, 25, 32, 40, 63].map(n => `<button class="chip${n =
 function homeCalc() {
   let W = 0, kwh = 0;
   DEVS.forEach(d => { if (d.on) { W += d.w; kwh += d.w * d.h * d.duty * 30 / 1000; } });
-  const A = W / 230, max = homeBk * 230, pct = W / max, T = +$('#homeT').value || 0;
-  $('#homeW').textContent = fmtW(W); $('#homeA').textContent = nf(A, 1) + ' А'; $('#homeM').textContent = nf(kwh, 0); $('#homeC').textContent = nf(kwh * T, 0) + ' ₽';
+  const A = W / 230, max = homeBk * 230, pct = W / max, T = TARIFF;
+  $('#homeW').textContent = fmtW(W); $('#homeA').textContent = nf(A, 1) + ' А'; $('#homeM').textContent = nf(kwh, 0); $('#homeC').textContent = nf(kwh * T, 0) + ' грн';
   const g = $('#homeGauge'); g.style.width = clamp(pct) * 100 + '%'; g.classList.toggle('hot', pct > .8);
   $('#homeMax').textContent = fmtW(max); $('#homeGl').textContent = nf(pct * 100, 0) + ' % от автомата ' + homeBk + ' А';
-  if (pct > 1) setVerdict($('#homeV'), 'bad', `💥 Автомат ${homeBk} А выбьет! Ток ${nf(A, 1)} А > ${homeBk} А. Выключи что-нибудь греющее или раскидай по разным линиям.`);
-  else if (pct > .8) setVerdict($('#homeV'), 'warn', `⚠️ ${nf(A, 1)} А из ${homeBk} А — работает на пределе и будет греть. Не включай всё сразу.`);
-  else setVerdict($('#homeV'), 'good', `✅ ${nf(A, 1)} А из ${homeBk} А — запас есть. Примерно ${nf(kwh, 0)} кВт·ч в месяц у выбранных приборов.`);
+  if (pct > 1) setVerdict($('#homeV'), 'bad', `💥 Выбьет! ${nf(A, 1)} А > ${homeBk} А. Выключи что-то греющее.`);
+  else if (pct > .8) setVerdict($('#homeV'), 'warn', `⚠️ ${nf(A, 1)} А из ${homeBk} А. На пределе.`);
+  else setVerdict($('#homeV'), 'good', `✅ ${nf(A, 1)} А из ${homeBk} А. Запас есть.`);
 }
 devsEl.addEventListener('click', e => {
   const c = e.target.closest('.dev'); if (!c || e.target.tagName === 'INPUT') return;
@@ -359,7 +400,7 @@ devsEl.addEventListener('click', e => {
 devsEl.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('dev')) { e.preventDefault(); e.target.click(); } });
 devsEl.addEventListener('input', e => { if (e.target.tagName === 'INPUT') { const c = e.target.closest('.dev'); DEVS.find(x => x.id === c.dataset.id).h = clamp(+e.target.value || 0, 0, 24); homeCalc(); } });
 $('#homeBk').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; homeBk = +b.dataset.n; $$('#homeBk .chip').forEach(x => x.classList.toggle('on', x === b)); homeCalc(); });
-$('#homeT').addEventListener('input', homeCalc); homeCalc();
+homeCalc();
 
 /* =========================================================
    4. АВТОМАТЫ
@@ -374,10 +415,10 @@ function bkCalc() {
   $('#bkI').textContent = nf(I, 1) + ' А';
   $('#bkRec').textContent = rec ? 'C' + rec : '> 100';
   $('#bkCab').textContent = rec ? CABLE[rec] : '—';
-  if (!rec) { setVerdict($('#bkV'), 'bad', 'Это уровень вводного щита здания — обращайся к проектировщику.'); return; }
+  if (!rec) { setVerdict($('#bkV'), 'bad', 'Это уровень здания. Нужен проектировщик.'); return; }
   const load = I / rec;
-  const txt = `Ток <b>${nf(I, 1)} А</b> → ближайший номинал вверх: <b>${rec} А</b>, кабель медь <b>${CABLE[rec]} мм²</b> (типовой при открытой прокладке; в стене/трубе запас нужен больше).`;
-  if (load > .9) setVerdict($('#bkV'), 'warn', txt + ' ⚠️ Линия будет почти под завязку — лучше разделить на две.');
+  const txt = `<b>${nf(I, 1)} А</b> → автомат <b>${rec} А</b>, медь <b>${CABLE[rec]} мм²</b>.`;
+  if (load > .9) setVerdict($('#bkV'), 'warn', txt + ' ⚠️ Почти под завязку — раздели на две линии.');
   else setVerdict($('#bkV'), 'good', txt);
 }
 bind(['bkP'], bkCalc);
@@ -412,14 +453,14 @@ function drawTrip() {
   c.fillStyle = 'rgba(255,255,255,.55)'; c.textAlign = 'left'; c.fillText('кратность тока →', L + 4, T + 10);
 }
 function tripCalc() {
-  const k = +$('#bkK').value / 100; $('#vbkK').textContent = nf(k, 1) + ' × Iн';
+  const k = +$('#bkK').value / 100; $('#vbkK').textContent = nf(k, 1) + ' ×';
   const [k1, k2] = CURVES[curve]; const A = nf(k * 16, 0);
   let cls, msg;
-  if (k < 1.13) { cls = 'good'; msg = `Автомат <b>не отключится никогда</b>: ток ниже 1,13 × Iн (для C16 это ${nf(k * 16, 0)} А — всё в порядке).`; }
-  else if (k < 1.45) { cls = 'warn'; msg = 'Серая зона: между 1,13 и 1,45 × Iн. Автомат может отключиться, но <b>не раньше чем через час</b>.'; }
-  else if (k < k1) { cls = 'warn'; msg = `Тепловая защита: отключится примерно через <b>${fmtT(tripT(k))}</b>. Биметалл греется. Для C16 это ${A} А.`; }
-  else if (k < k2) { cls = 'warn'; msg = `Зона неопределённости магнитной защиты (${k1}–${k2}×): может сработать <b>мгновенно</b>, а может ещё «подумать» несколько секунд.`; }
-  else { cls = 'bad'; msg = `⚡ Выше ${k2}× — срабатывает <b>мгновенно, за ~10 мс</b>. Это уже короткое замыкание. Для C16 — ${A} А.`; }
+  if (k < 1.13) { cls = 'good'; msg = 'Не отключится <b>никогда</b>. Ток ниже 1,13 ×.'; }
+  else if (k < 1.45) { cls = 'warn'; msg = 'Серая зона. Если и отключит — <b>не раньше чем через час</b>.'; }
+  else if (k < k1) { cls = 'warn'; msg = `Отключит через <b>${fmtT(tripT(k))}</b>. Для C16 это ${A} А.`; }
+  else if (k < k2) { cls = 'warn'; msg = `Зона ${k1}–${k2}×: может выбить <b>мгновенно</b>, а может подумать пару секунд.`; }
+  else { cls = 'bad'; msg = `⚡ Выше ${k2}× — <b>выбьет за 10 мс</b>. Это КЗ. Для C16 — ${A} А.`; }
   setVerdict($('#tripV'), cls, msg); drawTrip();
 }
 bind(['bkK'], tripCalc);
@@ -430,16 +471,16 @@ tripCalc();
    5. БЛОКИ ПИТАНИЯ
    ========================================================= */
 const HS = {
-  model: ['Модель', 'Просто название. По нему можно найти точные параметры в интернете, если этикетка стёрлась.'],
-  'in-v': ['100–240 В ~', 'Входное напряжение. Знак «~» — переменный ток. Диапазон 100–240 В значит: блок <b>импульсный</b> и работает в любой стране мира без переключателей.'],
-  'in-hz': ['50/60 Гц', 'Частота сети. У нас 50, в США 60. Блок понимает оба варианта.'],
-  'in-a': ['1,2 А (вход)', 'Максимальный ток <b>из розетки</b> при полной нагрузке и самом низком входном напряжении (100 В). При 230 В реально будет ≈ 0,2 А. Это не то, что отдаёт блок!'],
-  'out-v': ['12 В ⎓', 'Выходное напряжение. Знак «⎓» — <b>постоянный ток</b> (DC). Должно <b>точно совпадать</b> с требованием прибора. Не 11, не 15 — именно 12.'],
-  'out-a': ['3 А (выход)', 'Максимальный ток, который блок готов отдать. Прибору нужно 1 А? Он возьмёт 1 А. Нужно 4 А? Блок перегреется или «просядет». Бери с запасом 20–30 %.'],
-  'out-w': ['36 Вт', 'Максимальная мощность: 12 В × 3 А = 36 Вт. Проверь сам: P = U × I.'],
-  pol: ['Полярность', 'Условное обозначение штекера. Круг в центре с «+» — плюс на центральном контакте. Перепутаешь — можно сжечь устройство. Всегда сверяй значок на БП и на приборе.'],
-  cl2: ['Двойная изоляция (класс II)', 'Два квадрата — блок без заземления, но с двойной изоляцией. Безопасен, даже если нет «земли» в розетке.'],
-  eff: ['Level VI', 'Класс энергоэффективности. VI — самый строгий: блок почти не греется на холостом ходу и КПД ≥ 85–88 %. Чем выше цифра, тем меньше «паразитного» потребления.']
+  model: ['Модель', 'Название. По нему найдёшь параметры в интернете.'],
+  'in-v': ['100–240 В ~', 'Вход. «~» — переменный ток. Блок импульсный и работает в любой стране.'],
+  'in-hz': ['50/60 Гц', 'Частота сети. Блок понимает обе.'],
+  'in-a': ['1,2 А на входе', 'Ток <b>из розетки</b> при максимуме. Это не то, что отдаёт блок.'],
+  'out-v': ['12 В ⎓', 'Выход. «⎓» — постоянный ток. Должен <b>точно</b> совпасть с прибором.'],
+  'out-a': ['3 А на выходе', 'Максимум, который отдаст блок. Прибор берёт сколько ему надо. Бери с запасом 20–30 %.'],
+  'out-w': ['36 Вт', '12 В × 3 А = 36 Вт. P = U × I.'],
+  pol: ['Полярность', 'Где плюс: в центре штекера или снаружи. Перепутал — сжёг плату.'],
+  cl2: ['Двойная изоляция', 'Два квадрата — без заземления, но безопасно.'],
+  eff: ['Level VI', 'Класс КПД. VI — самый строгий. Блок почти не греется.']
 };
 $('.psu-label').addEventListener('click', e => {
   const b = e.target.closest('.hs'); if (!b) return;
@@ -456,9 +497,9 @@ function psuCalc() {
   const rec = PSUA.find(a => a >= I * 1.25) || Math.ceil(I * 1.25);
   $('#psuRec').textContent = nf(U, 1) + ' В · ' + rec + ' А';
   const load = I / have; const g = $('#psuGauge'); g.style.width = clamp(load) * 100 + '%'; g.classList.toggle('hot', load > .8);
-  if (load > 1) setVerdict($('#psuV'), 'bad', `❌ Прибору нужно ${nf(I, 2)} А, а блок даёт только ${nf(have, 1)} А. Просадка напряжения, перегрев, самоперезагрузки. Возьми от ${rec} А.`);
-  else if (load > .8) setVerdict($('#psuV'), 'warn', `⚠️ Загрузка ${nf(load * 100, 0)} %. Работать будет, но блок станет горячим и быстро износится. Нужен запас 20–30 %.`);
-  else setVerdict($('#psuV'), 'good', `✅ Загрузка ${nf(load * 100, 0)} % — отлично. Напоминаю: напряжение <b>${nf(U, 1)} В</b> должно совпасть ровно. Ток БП может быть сколько угодно больше.`);
+  if (load > 1) setVerdict($('#psuV'), 'bad', `❌ Нужно ${nf(I, 2)} А, а блок даёт ${nf(have, 1)} А. Перегрев и перезагрузки. Бери от ${rec} А.`);
+  else if (load > .8) setVerdict($('#psuV'), 'warn', `⚠️ Загрузка ${nf(load * 100, 0)} %. Будет горячий. Нужен запас 20–30 %.`);
+  else setVerdict($('#psuV'), 'good', `✅ Загрузка ${nf(load * 100, 0)} %. Вольты — ровно <b>${nf(U, 1)} В</b>.`);
 }
 $('#psuDevs').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const d = PD[b.dataset.i]; $('#psuU').value = d[1]; $('#psuIn').value = d[2]; $$('#psuDevs .chip').forEach(x => x.classList.toggle('on', x === b)); psuCalc(); });
 bind(['psuU', 'psuIn', 'psuHave'], psuCalc); psuCalc();
@@ -467,14 +508,14 @@ bind(['psuU', 'psuIn', 'psuHave'], psuCalc); psuCalc();
    6. ПУСКОВОЙ ТОК
    ========================================================= */
 const INR = [
-  ['🧊 Холодильник', 150, 6, .35, 'Мотор компрессора толкает ротор с места: в первые доли секунды ток ×5–7. Автомату C16 это безразлично, а вот слабому ИБП или инвертору — нет.'],
-  ['💡 Лампа накаливания', 100, 12, .1, 'Холодная вольфрамовая нить почти не имеет сопротивления. Пока она греется (~0,1 с) — ток в 10–15 раз выше рабочего. Часто перегорают именно при включении.'],
-  ['💻 БП ноутбука', 65, 100, .0015, 'Разряженные конденсаторы внутри блока питания — как пустые бочки. Первые 1–2 мс они «глотают» ток до 30–40 А. Для этого в БП ставят NTC-термистор.'],
-  ['🔊 Тороидальный трансформатор', 300, 15, .08, 'Железный сердечник намагничивается. Если включить в неудачную фазу напряжения — пик до 15–30×, поэтому усилители «выбивают» автомат при включении.'],
-  ['🚰 Насос 750 Вт', 750, 7, .6, 'Мотор под нагрузкой — пусковой ×6–8. Для таких приборов в щитке ставят автомат с кривой C или D, а для генератора берут 3-кратный запас.'],
-  ['❄️ Кондиционер (обычный)', 1000, 6, .5, 'Компрессор стартует «в лоб», без разгона: ×6. Рабочий ток 4 А, а пик 25 А.'],
-  ['❄️ Кондиционер инверторный', 900, 1.3, 1.5, 'Инвертор плавно раскручивает компрессор — пусковой ток почти не превышает рабочий. Вот главный плюс «инверторных» приборов.'],
-  ['💡 LED-лампа 9 Вт', 9, 25, .002, 'Драйвер лампы — миниатюрный БП, поэтому тот же эффект: короткий пик в 1–2 мс. Если на линии 50 LED-ламп — пики складываются!']
+  ['🧊 Холодильник', 150, 6, .35, 'Мотор стартует с места: ток ×6. Автомату всё равно. Слабому инвертору — нет.'],
+  ['💡 Лампа накаливания', 100, 12, .1, 'Холодная нить — почти без сопротивления. ×12 на 0,1 с. Перегорают именно при включении.'],
+  ['💻 БП ноутбука', 65, 100, .0015, 'Конденсаторы как пустые бочки. 1–2 мс ток до 30 А. Для этого в БП ставят NTC.'],
+  ['🔊 Тороидальный трансформатор', 300, 15, .08, 'Сердечник намагничивается. Пик ×15 и больше. Поэтому усилители выбивают автомат.'],
+  ['🚰 Насос 750 Вт', 750, 7, .6, 'Мотор под нагрузкой: ×7. Нужна кривая C или D. Для генератора — запас ×3.'],
+  ['❄️ Кондиционер (обычный)', 1000, 6, .5, 'Компрессор стартует в лоб. Рабочий 4 А, пик 25 А.'],
+  ['❄️ Кондиционер инверторный', 900, 1.3, 1.5, 'Инвертор плавно разгоняет компрессор. Пика почти нет. Это главный плюс.'],
+  ['💡 LED-лампа 9 Вт', 9, 25, .002, 'Внутри мини-БП. Пик 1–2 мс. 50 ламп на линии — пики складываются.']
 ];
 let inrI = 0, inrS = 0, inrT0 = 0;
 $('#inrDevs').innerHTML = INR.map((d, i) => `<button class="chip${i === 0 ? ' on' : ''}" data-i="${i}">${d[0]}</button>`).join('');
@@ -517,8 +558,8 @@ function sgCalc() {
   let extra = 0, who = null; on.forEach(d => { const e = d.w * (d.k - 1); if (e > extra) { extra = e; who = d; } });
   const peak = run + extra, inv = Math.ceil(Math.max(run * 1.25, peak / 2) / 100) * 100;
   $('#sgRun').textContent = fmtW(run); $('#sgPeak').textContent = fmtW(peak); $('#sgInv').textContent = on.length ? fmtW(inv) : '—';
-  if (!on.length) setVerdict($('#sgV'), 'good', 'Отметь приборы — и я посчитаю.');
-  else setVerdict($('#sgV'), extra > run * .6 ? 'warn' : 'good', `Рабочая мощность <b>${fmtW(run)}</b>, но при старте${who && extra > 0 ? ` <b>${who.n.toLowerCase()}</b>` : ''} добавит пик → <b>${fmtW(peak)}</b>. Выбирай инвертор <b>от ${fmtW(inv)}</b> (с запасом 25 % по рабочей и ×2 по пиковой мощности — типично для инверторов, которые держат пик 1–3 с).`);
+  if (!on.length) setVerdict($('#sgV'), 'good', 'Отметь приборы.');
+  else setVerdict($('#sgV'), extra > run * .6 ? 'warn' : 'good', `Работа <b>${fmtW(run)}</b>. На старте${who && extra > 0 ? ` <b>${who.n.toLowerCase()}</b>` : ''} даст пик <b>${fmtW(peak)}</b>. Бери инвертор <b>от ${fmtW(inv)}</b>.`);
 }
 $('#surgeList').addEventListener('click', e => { const c = e.target.closest('.dev'); if (!c) return; const d = SG[c.dataset.i]; d.on = !d.on; c.classList.toggle('on', d.on); sgCalc(); });
 $('#surgeList').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('dev')) { e.preventDefault(); e.target.click(); } });
@@ -533,7 +574,7 @@ function effCalc() {
   const Pin = P / E, heat = Pin - P, yr = heat * H * 365 / 1000;
   $('#effIn').textContent = fmtW(Pin); $('#effHeat').textContent = fmtW(heat); $('#effYear').textContent = nf(yr, 0) + ' кВт·ч';
   $('#effUse').style.width = E * 100 + '%';
-  setVerdict($('#effV'), E < .6 ? 'bad' : E < .85 ? 'warn' : 'good', `Из розетки <b>${fmtW(Pin)}</b>, на дело идёт <b>${fmtW(P)}</b>, а <b>${fmtW(heat)}</b> просто греет комнату. За год потери = <b>${nf(yr, 0)} кВт·ч</b> ≈ ${nf(yr * 6, 0)} ₽ при тарифе 6 ₽.${E < .6 ? ' 🔥 Это печка, а не блок питания.' : ''}`);
+  setVerdict($('#effV'), E < .6 ? 'bad' : E < .85 ? 'warn' : 'good', `Из розетки <b>${fmtW(Pin)}</b>. Дело: <b>${fmtW(P)}</b>. Тепло: <b>${fmtW(heat)}</b>. Потери за год ≈ <b>${nf(yr * TARIFF, 0)} грн</b>.${E < .6 ? ' 🔥 Это печка.' : ''}`);
 }
 bind(['effP', 'effE', 'effH'], effCalc);
 $$('[data-ee]').forEach(b => b.addEventListener('click', () => { $('#effE').value = b.dataset.ee; paint($('#effE')); effCalc(); })); effCalc();
@@ -554,7 +595,7 @@ function chainRender() {
 }
 function chainCalc() {
   let cum = 1; chV.forEach((v, i) => { cum *= v / 100; $('#cl' + i).textContent = v + ' % → осталось ' + nf(cum * 100, 1) + ' %'; const b = $('#cb' + i); b.style.width = cum * 100 + '%'; b.classList.toggle('hot', cum < .7); });
-  setVerdict($('#chainV'), cum > .85 ? 'good' : cum > .7 ? 'warn' : 'bad', `Общий КПД цепочки: <b>${nf(cum * 100, 1)} %</b>. Из каждых 100 Вт на входе до цели доходит <b>${nf(cum * 100, 0)} Вт</b>, а <b>${nf(100 - cum * 100, 0)} Вт</b> уходит в тепло. КПД звеньев <i>перемножаются</i>.`);
+  setVerdict($('#chainV'), cum > .85 ? 'good' : cum > .7 ? 'warn' : 'bad', `Общий КПД: <b>${nf(cum * 100, 1)} %</b>. Из 100 Вт доходит <b>${nf(cum * 100, 0)}</b>, в тепло уходит <b>${nf(100 - cum * 100, 0)}</b>.`);
 }
 $('#chainPre').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; chI = +b.dataset.i; chV = CH[chI][1].map(s => s[1]); $$('#chainPre .chip').forEach(x => x.classList.toggle('on', x === b)); chainRender(); });
 chainRender();
@@ -564,7 +605,7 @@ chainRender();
    ========================================================= */
 let wave = 'sine';
 const sineCv = regCanvas('sineCv');
-const WV = { sine: ['good', 'Идеальная синусоида — как из розетки. Подходит любым приборам: котлам, насосам, холодильникам, звуковой аппаратуре. Бери, если есть выбор.'], mod: ['warn', 'Ступенчатая «модифицированная синусоида». Для чайника, ламп и зарядок — нормально. Моторы гудят и греются, у котлов и циркуляционных насосов бывают сбои.'], sq: ['bad', 'Меандр — дешёвый «прямоугольник». Годится разве что для ламп накаливания и паяльника. Электроника и моторы страдают, возможен выход из строя.'] };
+const WV = { sine: ['good', 'Как в розетке. Подходит всему. Бери, если есть выбор.'], mod: ['warn', 'Ступеньки. Чайник и лампы ок. Моторы гудят, котёл может глючить.'], sq: ['bad', 'Дешёвый прямоугольник. Электроника и моторы страдают.'] };
 function waveY(ph) { // ph в циклах, вернёт -1..1
   const f = ph - Math.floor(ph);
   if (wave === 'sine') return Math.sin(f * TAU);
@@ -582,7 +623,7 @@ function drawWave(t) {
   for (let x = 0; x <= w; x += 3) { const y = mid - Math.sin((x / w * cycles - ph0) * TAU) * A; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); c.setLineDash([]);
   c.strokeStyle = '#ffd60a'; c.lineWidth = 4; c.shadowColor = '#ffd60a'; c.shadowBlur = 16; c.lineJoin = 'round'; c.beginPath();
   for (let x = 0; x <= w; x += 1) { const y = mid - waveY(x / w * cycles - ph0) * A; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); c.shadowBlur = 0;
-  c.fillStyle = 'rgba(255,255,255,.55)'; c.font = '12px ui-monospace,monospace'; c.fillText('жёлтая — выход инвертора · голубая — идеальная синусоида из розетки', 12, h - 10);
+  c.fillStyle = 'rgba(255,255,255,.55)'; c.font = '12px ui-monospace,monospace'; c.fillText('жёлтая — инвертор · голубая — розетка', 12, h - 10);
 }
 function waveInfo() { setVerdict($('#waveV'), WV[wave][0], WV[wave][1]); }
 $('#waves').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; wave = b.dataset.w; $$('#waves .chip').forEach(x => x.classList.toggle('on', x === b)); waveInfo(); });
@@ -596,9 +637,9 @@ function invCalc() {
   const hrs = Ah * invV * invD * .9 / P;
   $('#invI').textContent = nf(I, 0) + ' А'; $('#invS').textContent = S; $('#invT').textContent = fmtH(hrs);
   const kwh = Ah * invV / 1000;
-  if (I > 100) setVerdict($('#invVd'), 'bad', `🔥 ${nf(I, 0)} А по низковольтной стороне — это очень много: провода толщиной с палец, греются клеммы и предохранитель. Переходи на <b>${invV === 12 ? '24 или 48' : '48'} В</b>.`);
-  else if (I > 50) setVerdict($('#invVd'), 'warn', `⚠️ ${nf(I, 0)} А — нужен толстый короткий провод (медь ≥ ${S} мм²) и предохранитель на ${Math.ceil(I * 1.25 / 10) * 10} А. Батарея ${kwh.toFixed(1)} кВт·ч проработает ≈ ${fmtH(hrs)}.`);
-  else setVerdict($('#invVd'), 'good', `✅ ${nf(I, 0)} А — комфортно. Батарея ${nf(kwh, 1)} кВт·ч, с учётом глубины разряда и КПД инвертора 90 % проработает ≈ <b>${fmtH(hrs)}</b>.`);
+  if (I > 100) setVerdict($('#invVd'), 'bad', `🔥 ${nf(I, 0)} А — провод толщиной с палец. Переходи на <b>${invV === 12 ? '24 или 48' : '48'} В</b>.`);
+  else if (I > 50) setVerdict($('#invVd'), 'warn', `⚠️ ${nf(I, 0)} А. Нужен толстый провод и предохранитель на ${Math.ceil(I * 1.25 / 10) * 10} А.`);
+  else setVerdict($('#invVd'), 'good', `✅ ${nf(I, 0)} А — спокойно. Батарея ${nf(kwh, 1)} кВт·ч. Хватит на <b>${fmtH(hrs)}</b>.`);
 }
 bind(['invP', 'invAh'], invCalc);
 $('#invV').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; invV = +b.dataset.v; $$('#invV .chip').forEach(x => x.classList.toggle('on', x === b)); invCalc(); });
@@ -623,10 +664,10 @@ sceneHandlers.car = p => {
   chgTxt.textContent = Math.round(lv) + '%'; chgLed.setAttribute('fill', p > .4 ? (p > .97 ? '#3ddc84' : '#ffd60a') : '#ff5470');
   carNum.textContent = Math.round(lv) + '%';
   let s;
-  if (p < .3) s = ['Подъезжает', 'Батарея почти пуста · 10 %', 'Едет к зарядке…'];
-  else if (p < .4) s = ['Втыкаем кабель', 'Wallbox 7,4 кВт · однофазная сеть, 32 А', 'Подключение'];
-  else if (p < .97) s = ['Заряжается', `${nf(60 * (lv - 10) / 100, 1)} кВт·ч закачано · ток 32 А на 230 В`, 'Заряжается ⚡'];
-  else s = ['100 % — поехали!', 'Всего 3,5 ₽/км при тарифе 6 ₽', 'Заряжена'];
+  if (p < .3) s = ['Подъезжает', 'Батарея почти пуста', 'Едет к зарядке…'];
+  else if (p < .4) s = ['Втыкаем кабель', 'Wallbox 7,4 кВт', 'Подключение'];
+  else if (p < .97) s = ['Заряжается', `${nf(60 * (lv - 10) / 100, 1)} кВт·ч закачано`, 'Заряжается ⚡'];
+  else s = ['100 % — поехали!', '≈ 0,7 грн за км', 'Заряжена'];
   carH.textContent = s[0]; carP.textContent = s[1]; carStep.textContent = s[2];
 };
 sceneHandlers.car(0);
@@ -637,7 +678,7 @@ $('#evCh').innerHTML = CHG.map((c, i) => `<button class="chip${i === evC ? ' on'
 function evCalc(src) {
   let F = +$('#evF').value, T = +$('#evT').value;
   if (T < F + 5) { if (src === 'F') { T = Math.min(100, F + 5); $('#evT').value = T; if (T - F < 5) { F = T - 5; $('#evF').value = F; } } else { F = Math.max(0, T - 5); $('#evF').value = F; } paint($('#evT')); paint($('#evF')); }
-  const B = +$('#evB').value, tar = +$('#evTar').value || 0, [name, P, dc] = CHG[evC];
+  const B = +$('#evB').value, tar = TARIFF, [name, P, dc] = CHG[evC];
   $('#vevB').textContent = B + ' кВт·ч'; $('#vevR').textContent = F + ' % → ' + T + ' %'; $('#evFromTxt').textContent = F + '%'; $('#evToTxt').textContent = T + '%';
   const e = B * (T - F) / 100; let grid, time;
   if (!dc) { grid = e / .9; time = grid / P; }
@@ -646,15 +687,15 @@ function evCalc(src) {
     const lo = B * Math.max(0, Math.min(T, 80) - F) / 100, hi = B * Math.max(0, T - Math.max(F, 80)) / 100;
     time = lo / (pe * .8) + hi / (pe * .3);
   }
-  $('#evTime').textContent = fmtH(time); $('#evKwh').textContent = nf(grid, 1) + ' кВт·ч'; $('#evKm').textContent = nf(e / .16, 0) + ' км'; $('#evCost').textContent = nf(grid * tar, 0) + ' ₽';
+  $('#evTime').textContent = fmtH(time); $('#evKwh').textContent = nf(grid, 1) + ' кВт·ч'; $('#evKm').textContent = nf(e / .16, 0) + ' км'; $('#evCost').textContent = nf(grid * tar, 0) + ' грн';
   const b = $('#evBar'); b.style.left = F + '%'; b.style.width = (T - F) + '%';
   let cls = 'good', msg;
-  if (P < 3) { cls = time > 12 ? 'warn' : 'good'; msg = `Обычная розетка 2,3 кВт — это ≈ 10 А <b>часами подряд</b>. Для розетки и кабеля это серьёзная нагрузка: нужна отдельная линия, хорошая розетка и контроль нагрева вилки. Зато ночью: ${fmtH(time)} — к утру всё готово.`; }
-  else if (!dc) msg = `Домашняя зарядка ${nf(P, 1)} кВт: ${fmtH(time)}. Ток при 230 В ≈ ${nf(P * 1000 / 230, 0)} А (нужна выделенная линия и автомат ${P > 8 ? '3×16–32 А' : '32 А'}).`;
-  else { cls = 'warn'; msg = `Быстрая DC-станция: ${fmtH(time)}. До 80 % — на полной скорости, выше — станция сама замедляется, чтобы не греть батарею. Цена обычно выше домашней.`; }
+  if (P < 3) { cls = time > 12 ? 'warn' : 'good'; msg = `10 А <b>часами подряд</b>. Нужна отдельная линия и хорошая розетка. Следи, не греется ли вилка. Время: ${fmtH(time)}.`; }
+  else if (!dc) msg = `${fmtH(time)}. Ток ≈ ${nf(P * 1000 / 230, 0)} А. Нужна отдельная линия.`;
+  else { cls = 'warn'; msg = `${fmtH(time)}. До 80 % быстро, дальше медленнее. Обычно дороже, чем дома.`; }
   setVerdict($('#evV'), cls, msg);
 }
-bind(['evB', 'evTar'], () => evCalc()); $('#evF').addEventListener('input', () => evCalc('F')); $('#evT').addEventListener('input', () => evCalc('T'));
+bind(['evB'], () => evCalc()); $('#evF').addEventListener('input', () => evCalc('F')); $('#evT').addEventListener('input', () => evCalc('T'));
 $('#evCh').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; evC = +b.dataset.i; $$('#evCh .chip').forEach(x => x.classList.toggle('on', x === b)); evCalc(); });
 evCalc();
 
